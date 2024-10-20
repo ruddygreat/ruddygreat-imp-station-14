@@ -18,4 +18,10 @@ public sealed partial class DebrisAccumulatorWindow : FancyWindow,
         RobustXamlLoader.Load(this);
         IoCManager.InjectDependencies(this);
     }
+
+    public void AddGroup(DebrisAccumulatorWreckGroup group)
+    {
+        GroupContainer.AddChild(group);
+    }
+
 }

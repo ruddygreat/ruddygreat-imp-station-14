@@ -1,0 +1,23 @@
+<BoxContainer xmlns="https://spacestation14.io"
+              xmlns:controls="clr-namespace:Content.Client.UserInterface.Controls"
+              HorizontalExpand="True"
+              VerticalExpand="True"
+              Orientation="Vertical"
+              Margin="4">
+    <controls:StripeBack>
+        <Label Name="TitleStripe"
+               HorizontalAlignment="Center"
+               Margin="0 0 0 0"
+               Text="Group name"/>
+    </controls:StripeBack>
+    <!-- container for the individual wreck infos -->
+    <BoxContainer Name="InfoDisplayContainer" Orientation="Horizontal"/>
+    <!-- progress bar till next wreck; hold buttons; reject button -->
+    <Control VerticalExpand="True"/>
+    <BoxContainer Name="ProgressBarContainer" Orientation="Horizontal" VerticalAlignment="Bottom">
+        <ProgressBar Name="TimeRemainingBar" HorizontalExpand="True" Margin="2" MinValue="0" MaxValue="1"/>
+        <Label Name="TimeRemainingLabel" Text="00:00" HorizontalAlignment="Left"/>
+    </BoxContainer>
+    <Button Name="HoldGroupButton" Text="Hold" ToggleMode="True" VerticalAlignment="Bottom" Margin="1"/>
+    <Button Name="RejectGroupButton" Text="Reject" ToggleMode="True" VerticalAlignment="Bottom" Margin="1"/>
+</BoxContainer>

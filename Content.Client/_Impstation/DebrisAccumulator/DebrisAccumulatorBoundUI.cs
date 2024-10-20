@@ -27,5 +27,18 @@ public sealed class DebrisAccumulatorBoundUserInterface : BoundUserInterface
         _window = this.CreateWindow<DebrisAccumulatorWindow>();
         _window.Title = "Debris accumulator";
         _window.OpenCenteredLeft();
+
+        var group = new DebrisAccumulatorWreckGroup();
+        group.AddWreckInfo(new DebrisAccumulatorWreckInfoDisplay());
+        group.AddWreckInfo(new DebrisAccumulatorWreckInfoDisplay());
+        _window.AddGroup(group);
+        group = new DebrisAccumulatorWreckGroup();
+        group.AddWreckInfo(new DebrisAccumulatorWreckInfoDisplay());
+        group.AddWreckInfo(new DebrisAccumulatorWreckInfoDisplay());
+        _window.AddGroup(group);
+        group = new DebrisAccumulatorWreckGroup();
+        group.AddWreckInfo(new DebrisAccumulatorWreckInfoDisplay());
+        group.AddWreckInfo(new DebrisAccumulatorWreckInfoDisplay());
+        _window.AddGroup(group);
     }
 }
