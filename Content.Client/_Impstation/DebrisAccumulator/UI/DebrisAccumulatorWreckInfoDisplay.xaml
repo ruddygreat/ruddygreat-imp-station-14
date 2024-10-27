@@ -11,11 +11,11 @@
                Text="Reclaimer"/>
     </controls:StripeBack>
     <Label Name="ManufacturerLabel" Text="Manufacturer"/>
-    <Label Name="ManufacturerNameLabel" Text="nanotrasen" HorizontalAlignment="Right"/>
-    <Label Name="ConditionLabel" Text="Condition"/>
-    <Label Name="ConditionConditionLabel" Text="awful" HorizontalAlignment="Right" Modulate="#ff0000"/>
+    <Label Name="ManufacturerNameLabel" Text="NT-Cargo" HorizontalAlignment="Right"/>
     <Label Name="SizeLabel" Text="Size"/>
     <Label Name="SizeNameLabel" Text="small" HorizontalAlignment="Right" Modulate="#0000ff"/>
+    <Label Name="ConditionLabel" Text="Condition"/>
+    <Label Name="ConditionConditionLabel" Text="awful" HorizontalAlignment="Right" Modulate="#ff0000"/>
     <Label Name="DangerFactorsLabel" Text="Risk Factors"/>
     <Label Name="DangerFactorsNameLabel" Text="none" HorizontalAlignment="Right" Modulate="#00ff00"/>
 </BoxContainer>

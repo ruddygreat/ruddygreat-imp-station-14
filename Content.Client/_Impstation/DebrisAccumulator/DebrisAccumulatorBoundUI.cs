@@ -20,6 +20,8 @@ public sealed class DebrisAccumulatorBoundUserInterface : BoundUserInterface
         IoCManager.InjectDependencies(this);
     }
 
+    //todo draw the rest of the owl
+    //aaeugh god this is gonna be so much work
     protected override void Open()
     {
         base.Open();
