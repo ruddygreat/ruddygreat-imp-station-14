@@ -1,4 +1,5 @@
 using Content.Server.Objectives.Components;
+using Content.Server.Revolutionary.Components;
 using Content.Server.Shuttles.Systems;
 using Content.Server.GameTicking.Rules;
 using Content.Server.Preferences.Managers;
@@ -61,7 +62,7 @@ public sealed class KillPersonConditionSystem : EntitySystem
             return;
 
         // no other humans to kill
-        var allHumans = _mind.GetAliveHumansExcept(args.MindId);
+        var allHumans = _mind.GetAliveHumans(args.MindId);
         if (allHumans.Count == 0)
         {
             args.Cancelled = true;
@@ -85,19 +86,18 @@ public sealed class KillPersonConditionSystem : EntitySystem
             return;
 
         // no other humans to kill
-        var allHumans = _mind.GetAliveHumansExcept(args.MindId);
+        var allHumans = _mind.GetAliveHumans(args.MindId);
         if (allHumans.Count == 0)
         {
             args.Cancelled = true;
             return;
         }
 
-        var allHeads = new List<EntityUid>();
-        foreach (var mind in allHumans)
+        var allHeads = new HashSet<Entity<MindComponent>>();
+        foreach (var person in allHumans)
         {
-            // RequireAdminNotify used as a cheap way to check for command department
-            if (_job.MindTryGetJob(mind, out var prototype) && prototype.RequireAdminNotify)
-                allHeads.Add(mind);
+            if (TryComp<MindComponent>(person, out var mind) && mind.OwnedEntity is { } ent && HasComp<CommandStaffComponent>(ent))
+                allHeads.Add(person);
         }
 
         if (allHeads.Count == 0)
@@ -120,14 +120,14 @@ public sealed class KillPersonConditionSystem : EntitySystem
             return;
 
         // no other humans to kill
-        var allHumans = _mind.GetAliveHumansExcept(args.MindId);
+        var allHumans = _mind.GetAliveHumans(args.MindId).Select(p => p.Owner).ToHashSet();
         if (allHumans.Count == 0)
         {
             args.Cancelled = true;
             return;
         }
 
-        var traitors = Enumerable.ToList(_traitorRule.GetOtherTraitorMindsAliveAndConnected(args.Mind)).Select(t => t.Id).ToList();
+        var traitors = _traitorRule.GetOtherTraitorMindsAliveAndConnected(args.Mind).Select(t => t.Id).ToHashSet();
         args.Mind.ObjectiveTargets.ForEach(p => traitors.Remove(p));
 
         // You are the first/only traitor.
@@ -141,7 +141,7 @@ public sealed class KillPersonConditionSystem : EntitySystem
             }
 
             //Fallback to assign people who COULD be assigned as traitor - might need to just do this from the start on ForceAll rounds, limiting it to existing traitors could be skewing the numbers towards just a few people.
-            var allValidTraitorCandidates = new List<EntityUid>();
+            var allValidTraitorCandidates = new HashSet<EntityUid>();
             if (_traitorRule.CurrentAntagPool != null)
             {
                 var poolSessions = _traitorRule.CurrentAntagPool.GetPoolSessions();

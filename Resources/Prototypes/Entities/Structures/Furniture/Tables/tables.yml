@@ -54,6 +54,7 @@
   - type: Construction
     graph: Table
     node: TableFrame
+  - type: ThrownItemImmune # imp
 
 - type: entity
   id: CounterWoodFrame
@@ -109,6 +110,7 @@
   - type: Construction
     graph: Table
     node: CounterWoodFrame
+  - type: RequireProjectileTarget # Goobstation - Crawling
 
 - type: entity
   id: CounterMetalFrame

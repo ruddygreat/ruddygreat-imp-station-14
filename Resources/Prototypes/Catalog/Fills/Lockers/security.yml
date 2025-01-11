@@ -10,7 +10,6 @@
       - id: ClothingBeltSecurityFilled
       - id: Flash
       - id: ClothingEyesGlassesSecurity
-      - id: ClothingHeadsetAltSecurity
       - id: ClothingHandsGlovesCombat
       - id: ClothingShoesBootsJack
       - id: ClothingOuterCoatWarden
@@ -25,6 +24,7 @@
         amount: 2
       - id: RemoteSignaller
         amount: 2
+      - id: ClothingHeadsetWarden
       - id: ClothingOuterHardsuitBrigmedic
 
 - type: entity
@@ -39,7 +39,6 @@
       - id: ClothingBeltSecurityFilled
       - id: Flash
       - id: ClothingEyesGlassesSecurity
-      - id: ClothingHeadsetAltSecurity
       - id: ClothingHandsGlovesCombat
       - id: ClothingShoesBootsJack
       - id: ClothingOuterCoatWarden
@@ -54,6 +53,8 @@
       - id: RemoteSignaller
         amount: 2
       - id: ClothingOuterHardsuitBrigmedic
+      - id: ClothingHeadsetWarden
+      - id: TicketPad #imp special
 
 - type: entity
   id: LockerSecurityFilled
@@ -82,6 +83,7 @@
         prob: 0.6
       - id: BookSpaceLaw
         prob: 0.5
+      - id: TicketPad #imp special
 
 - type: entity
   id: LockerBrigmedicFilled
@@ -117,6 +119,7 @@
         prob: 0.7
       - id: ClothingNeckCloakMoth #bzzz Moth-pocalypse
         prob: 0.15
+      - id: TicketPad #imp special
 
 - type: entity
   id: LockerDetectiveFilled
@@ -141,6 +144,7 @@
       - id: HoloprojectorSecurity
       - id: BoxEvidenceMarkers
       - id: HandLabeler
+      - id: BoxTapeRecorder # DeltaV
 
 - type: entity
   id: ClosetBombFilled
@@ -160,7 +164,7 @@
         prob: 0.5
 
 - type: entity
-  parent: [GunSafe, BaseRestrictedContraband]
+  parent: [GunSafeBaseSecure, BaseRestrictedContraband]
   id: GunSafeDisabler
   name: disabler safe
   components:
@@ -170,21 +174,25 @@
       amount: 5
 
 - type: entity
-  parent: [GunSafe, BaseRestrictedContraband]
+  parent: [GunSafeBaseSecure, BaseRestrictedContraband]
   id: GunSafePistolMk58
-  name: mk58 safe
+  name: pistol safe
   components:
   - type: StorageFill
     contents:
     - id: WeaponPistolMk58
       amount: 4
+    - id: FullAutoConversionKit
+    - id: HyperBurstConversionKit
     - id: MagazinePistol
       amount: 8
+    - id: MagazineLPistol
+      amount: 4
 
 - type: entity
-  parent: [GunSafe, BaseRestrictedContraband]
+  parent: [GunSafeBaseSecure, BaseRestrictedContraband]
   id: GunSafeRifleLecter
-  name: lecter safe
+  name: rifle safe
   components:
   - type: StorageFill
     contents:
@@ -192,9 +200,12 @@
       amount: 2
     - id: MagazineRifle
       amount: 4
+    - id: WeaponRifleDaito
+    - id: MagazineDMR
+      amount: 2
 
 - type: entity
-  parent: [GunSafe, BaseRestrictedContraband]
+  parent: [GunSafeBaseSecure, BaseRestrictedContraband]
   id: GunSafeSubMachineGunDrozd
   name: drozd safe
   components:
@@ -206,7 +217,7 @@
       amount: 4
 
 - type: entity
-  parent: [GunSafe, BaseRestrictedContraband]
+  parent: [GunSafeBaseSecure, BaseRestrictedContraband]
   id: GunSafeShotgunEnforcer
   name: enforcer safe
   components:
@@ -218,7 +229,7 @@
       amount: 4
 
 - type: entity
-  parent: [GunSafe, BaseRestrictedContraband]
+  parent: [GunSafeBaseSecure, BaseRestrictedContraband]
   id: GunSafeShotgunKammerer
   name: kammerer safe
   components:
@@ -228,11 +239,15 @@
       amount: 2
     - id: MagazineShotgun
       amount: 4
+    - id: WeaponShotgunKammererBeanbag
+      amount: 2
+    - id: BoxBeanbag
+      amount: 2
 
 - type: entity
   id: GunSafeSubMachineGunWt550
   suffix: Wt550
-  parent: [GunSafe, BaseRestrictedContraband]
+  parent: [GunSafeBaseSecure, BaseRestrictedContraband]
   name: wt550 safe
   components:
   - type: StorageFill
@@ -243,7 +258,7 @@
       amount: 4
 
 - type: entity
-  parent: GunSafe
+  parent: GunSafeBaseSecure
   id: GunSafeLaserCarbine
   name: laser safe
   components:

@@ -272,6 +272,11 @@ public sealed partial class StoreSystem
                 RaiseLocalEvent(buyer, listing.ProductEvent);
         }
 
+        if (listing.DisableRefund)
+        {
+            component.RefundAllowed = false;
+        }
+
         //log dat shit.
         _admin.Add(LogType.StorePurchase,
             LogImpact.Low,
@@ -380,6 +385,9 @@ public sealed partial class StoreSystem
         RefreshAllListings(component);
         component.BalanceSpent = new();
         UpdateUserInterface(buyer, uid, component);
+
+        var ev = new StoreRefundedEvent();
+        RaiseLocalEvent(uid, ref ev, true);
     }
 
     private void HandleRefundComp(EntityUid uid, StoreComponent component, EntityUid purchase)
@@ -396,14 +404,29 @@ public sealed partial class StoreSystem
     }
 
     /// <summary>
+    ///     Enables refunds for this store
+    /// </summary>
+    public void EnableRefund(EntityUid buyer, EntityUid store, StoreComponent? component = null)
+    {
+        if (!Resolve(store, ref component))
+            return;
+
+        component.RefundAllowed = true;
+
+        UpdateUserInterface(buyer, store, component);
+    }
+
+    /// <summary>
     ///     Disables refunds for this store
     /// </summary>
-    public void DisableRefund(EntityUid store, StoreComponent? component = null)
+    public void DisableRefund(EntityUid buyer, EntityUid store, StoreComponent? component = null)
     {
         if (!Resolve(store, ref component))
             return;
 
         component.RefundAllowed = false;
+
+        UpdateUserInterface(buyer, store, component);
     }
 }
 

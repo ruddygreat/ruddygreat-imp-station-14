@@ -22,6 +22,9 @@ reagent-desc-ice-cream = It was either this or the microwave, and nobody wants i
 reagent-name-lemon-lime = lemon-lime
 reagent-desc-lemon-lime = tangy lime and lemon soda
 
+reagent-name-lemon-lime-cranberry = lemon-lime-cranberry
+reagent-desc-lemon-lime-cranberry = Tart cranberry, Christmas, and a hint of lemon and lime.
+
 reagent-name-pwr-game = Pwr Game
 reagent-desc-pwr-game = The only drink with the PWR that true gamers crave. When a gamer talks about gamerfuel, this is what they're literally referring to.
 
@@ -51,15 +54,3 @@ reagent-desc-fourteen-loko = A highly processed liquid substance barely-passing 
 
 reagent-name-shamblers-juice = Shambler's Juice
 reagent-desc-shamblers-juice = ~Shake me up some of that Shambler's Juice!~
-
-reagent-name-kingsoda = king Soda
-reagent-desc-kingsoda = A drink fit for a king. Or a seven year old.
-
-reagent-name-hummingbird = hummingbird's delight
-reagent-desc-hummingbird = A favourite of adolescent Vox just about everywhere.
-
-reagent-name-genderfluid = genderfluid
-reagent-desc-genderfluid = Looking at this drink makes you feel... ahem. Well.
-
-reagent-name-zombieslushie = zombie slushie
-reagent-desc-zombieslushie = Ice, Cream, and Raw Meat come together to create... this?
