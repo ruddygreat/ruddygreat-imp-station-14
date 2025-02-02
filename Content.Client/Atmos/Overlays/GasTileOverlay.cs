@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Numerics;
 using Content.Client.Atmos.Components;
 using Content.Client.Atmos.EntitySystems;
@@ -24,6 +25,9 @@ namespace Content.Client.Atmos.Overlays
 
         public override OverlaySpace Space => OverlaySpace.WorldSpaceEntities | OverlaySpace.WorldSpaceBelowWorld;
         private readonly ShaderInstance _shader;
+
+        private readonly ShaderInstance?[] _gasShaders; //imp edit - the list of shaders to use for each gas
+        private readonly string[] _gasColours; //imp edit - the list of colours to use for each gas, as hex codes
 
         // Gas overlays
         private readonly float[] _timer;
@@ -59,11 +63,26 @@ namespace Content.Client.Atmos.Overlays
             _frameCounter = new int[_gasCount];
             _frames = new Texture[_gasCount][];
 
+            _gasShaders = new ShaderInstance?[_gasCount]; //imp addition
+            _gasColours = new string[_gasCount];
+
             for (var i = 0; i < _gasCount; i++)
             {
                 var gasPrototype = protoMan.Index<GasPrototype>(system.VisibleGasId[i].ToString());
 
                 SpriteSpecifier overlay;
+
+                //imp edit start - assign shaders & gas colours
+                _gasColours[i] = gasPrototype.Color;
+                if (!string.IsNullOrEmpty(gasPrototype.Shader))
+                {
+                    _gasShaders[i] = protoMan.Index<ShaderPrototype>(gasPrototype.Shader).InstanceUnique();
+                }
+                else
+                {
+                    _gasShaders[i] = null;
+                }
+                //imp edit end
 
                 if (!string.IsNullOrEmpty(gasPrototype.GasOverlaySprite) && !string.IsNullOrEmpty(gasPrototype.GasOverlayState))
                     overlay = new SpriteSpecifier.Rsi(new (gasPrototype.GasOverlaySprite), gasPrototype.GasOverlayState);
@@ -156,9 +175,12 @@ namespace Content.Client.Atmos.Overlays
                 _frameCounter,
                 _fireFrames,
                 _fireFrameCounter,
-                _shader,
+                _shader, //imp note - this is the fire shader specifically.
                 overlayQuery,
-                xformQuery);
+                xformQuery,
+                _gasShaders, //imp edit - the list of gas shaders
+                _gasColours //imp edit - the list of gas colours
+                );
 
             var mapUid = _mapManager.GetMapEntityId(args.MapId);
 
@@ -178,9 +200,12 @@ namespace Content.Client.Atmos.Overlays
                         int[] frameCounter,
                         Texture[][] fireFrames,
                         int[] fireFrameCounter,
-                        ShaderInstance shader,
+                        ShaderInstance shader, //imp note - this is the shader for fire specifically.
                         EntityQuery<GasTileOverlayComponent> overlayQuery,
-                        EntityQuery<TransformComponent> xformQuery) state) =>
+                        EntityQuery<TransformComponent> xformQuery,
+                        ShaderInstance?[] gasShaders, //imp edit - the list of shaders used for each gas
+                        string[] colours //imp edit - the list of colours for each gas, as hex codes
+                        ) state) =>
                 {
                     if (!state.overlayQuery.TryGetComponent(uid, out var comp) ||
                         !state.xformQuery.TryGetComponent(uid, out var gridXform))
@@ -219,7 +244,25 @@ namespace Content.Client.Atmos.Overlays
                             {
                                 var opacity = gas.Opacity[i];
                                 if (opacity > 0)
-                                    state.drawHandle.DrawTexture(state.frames[i][state.frameCounter[i]], tilePosition, Color.White.WithAlpha(opacity));
+                                {
+                                    //imp edit start
+                                    //if no shader, continue as usual
+                                    if (state.gasShaders[i] == null)
+                                    {
+                                        state.drawHandle.DrawTexture(state.frames[i][state.frameCounter[i]], tilePosition, Color.White.WithAlpha(opacity));
+                                    }
+                                    else
+                                    {
+                                        //else, use the shader
+                                        var colour = state.colours[i] == string.Empty ? Color.White : Color.FromHex("#" + state.colours[i]).WithAlpha(opacity); //get the colour
+                                        state.gasShaders[i]!.SetParameter("colour", colour);
+                                        state.gasShaders[i]!.SetParameter("offset", new Vector2(tilePosition.X, tilePosition.Y));
+                                        state.drawHandle.UseShader(state.gasShaders[i]); //actually activate the shader
+                                        state.drawHandle.DrawRect(new Box2(tilePosition, new Vector2(tilePosition.X + 1, tilePosition.Y + 1)), colour); //draw the rect
+                                        state.drawHandle.UseShader(null); //reset the shader after drawing the rect so that other gases don't get overwritten
+                                    }
+                                    //imp edit end
+                                }
                             }
                         }
                     }

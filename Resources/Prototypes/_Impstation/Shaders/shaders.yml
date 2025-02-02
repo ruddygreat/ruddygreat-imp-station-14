@@ -2,3 +2,8 @@
   id: AccessibleFullStealth
   kind: source
   path: "/Textures/_Impstation/Shaders/accessible_full_stealth.swsl"
+
+- type: shader
+  id: BasicGasShader
+  kind: source
+  path: "/Textures/_Impstation/Shaders/basic_gas_shader.swsl"

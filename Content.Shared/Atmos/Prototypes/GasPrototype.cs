@@ -83,5 +83,17 @@ namespace Content.Shared.Atmos.Prototypes
 
         [DataField("pricePerMole")]
         public float PricePerMole { get; set; } = 0;
+
+        /// <summary>
+        /// imp edit - the id of the shader that this gas should use for rendering. if this is not null or empty, then the specified texture will be assumed to be a noise texture.
+        /// </summary>
+        [DataField("shader")]
+        public string Shader = string.Empty;
+
+        /// <summary>
+        /// imp edit - the number of layers of noise. only used if shader != null. the gas overlay automatically searches for the various noise texture RSI states using this.
+        /// </summary>
+        [DataField("noiseLayers")]
+        public int NoiseLayers = 0;
     }
 }
