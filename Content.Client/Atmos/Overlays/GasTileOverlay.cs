@@ -27,7 +27,7 @@ namespace Content.Client.Atmos.Overlays
         private readonly ShaderInstance _shader;
 
         private readonly ShaderInstance?[] _gasShaders; //imp edit - the list of shaders to use for each gas
-        private readonly string[] _gasColours; //imp edit - the list of colours to use for each gas, as hex codes
+        private readonly Color[] _gasColours; //imp edit - the list of colours to use for each gas, as hex codes
 
         // Gas overlays
         private readonly float[] _timer;
@@ -64,7 +64,7 @@ namespace Content.Client.Atmos.Overlays
             _frames = new Texture[_gasCount][];
 
             _gasShaders = new ShaderInstance?[_gasCount]; //imp addition
-            _gasColours = new string[_gasCount];
+            _gasColours = new Color[_gasCount];
 
             for (var i = 0; i < _gasCount; i++)
             {
@@ -73,7 +73,7 @@ namespace Content.Client.Atmos.Overlays
                 SpriteSpecifier overlay;
 
                 //imp edit start - assign shaders & gas colours
-                _gasColours[i] = gasPrototype.Color;
+                _gasColours[i] = gasPrototype.Color == string.Empty ? Color.White : Color.FromHex("#" + gasPrototype.Color);
                 if (!string.IsNullOrEmpty(gasPrototype.Shader))
                 {
                     _gasShaders[i] = protoMan.Index<ShaderPrototype>(gasPrototype.Shader).InstanceUnique();
@@ -203,8 +203,8 @@ namespace Content.Client.Atmos.Overlays
                         ShaderInstance shader, //imp note - this is the shader for fire specifically.
                         EntityQuery<GasTileOverlayComponent> overlayQuery,
                         EntityQuery<TransformComponent> xformQuery,
-                        ShaderInstance?[] gasShaders, //imp edit - the list of shaders used for each gas
-                        string[] colours //imp edit - the list of colours for each gas, as hex codes
+                        ShaderInstance?[] gasShaders, //imp edit - the list of shaders used for each gas. I should be shot for making this a 12-item tuple.
+                        Color[] colours //imp edit - the list of colours for each gas, as hex codes
                         ) state) =>
                 {
                     if (!state.overlayQuery.TryGetComponent(uid, out var comp) ||
@@ -254,11 +254,14 @@ namespace Content.Client.Atmos.Overlays
                                     else
                                     {
                                         //else, use the shader
-                                        var colour = state.colours[i] == string.Empty ? Color.White : Color.FromHex("#" + state.colours[i]).WithAlpha(opacity); //get the colour
+                                        //todo think really hard about how to make this look gooder
+                                        //will want a shader per-gas?
+                                        //todo will want to figure out how to get a noise tex to the shader instead of calculating the noise for every tile every frame
+                                        var colour = state.colours[i].WithAlpha(opacity); //get the colour
                                         state.gasShaders[i]!.SetParameter("colour", colour);
-                                        state.gasShaders[i]!.SetParameter("offset", new Vector2(tilePosition.X, tilePosition.Y));
+                                        state.gasShaders[i]!.SetParameter("offset", new Vector2(tilePosition.X, tilePosition.Y)); //todo make this make the effect tile seamlessly
                                         state.drawHandle.UseShader(state.gasShaders[i]); //actually activate the shader
-                                        state.drawHandle.DrawRect(new Box2(tilePosition, new Vector2(tilePosition.X + 1, tilePosition.Y + 1)), colour); //draw the rect
+                                        state.drawHandle.DrawRect(new Box2(tilePosition, new Vector2(tilePosition.X + 1f, tilePosition.Y + 1f)), colour); //draw the rect
                                         state.drawHandle.UseShader(null); //reset the shader after drawing the rect so that other gases don't get overwritten
                                     }
                                     //imp edit end

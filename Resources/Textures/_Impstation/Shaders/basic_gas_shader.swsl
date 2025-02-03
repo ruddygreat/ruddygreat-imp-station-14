@@ -7,22 +7,23 @@ void fragment() {
 
 	COLOR.rgb = colour.rgb; //assign rgb values immediately, a will be set by noise function later & then multiplied by colour.a
 	COLOR.a = 0;
-	
+
 	highp float multiple = (1.0 / tileSize);
 	highp vec2 rem = vec2(mod(UV.x, multiple), mod(UV.y, multiple));
 	highp vec2 rounded = UV - rem; //downsample to a 32 * 32 grid for stylistic consistency
 	rounded += offset;
-	
-	COLOR.a = gNoise((rounded * 100.0 + TIME)); //output the alpha!
-	//COLOR.a *= gNoise(vec2(sin(rounded.x - (TIME * 0.25)), cos(rounded.y - (TIME * 0.25))));
-	//COLOR.a *= gNoise(vec2(sin(rounded.x + (TIME * 0.125)), cos(rounded.y + (TIME * 0.125))));
-	//COLOR.a *= gNoise(vec2(sin(rounded.x - (TIME)), cos(rounded.y - (TIME))) * 0.625);
-	COLOR.a *= colour.a;
+
+	COLOR.a = gNoise(rounded * 100.0 + (TIME));
+	COLOR.a *= gNoise(rounded * 100.0 - (TIME));
+	//COLOR.a *= gNoise(vec2((rounded.x * 20.0 + (TIME * 0.25), rounded.y)));
+	//COLOR.a *= gNoise(vec2((rounded.x, rounded.y * 20 - (TIME * 0.25))));
+	//COLOR.a += 0.2;
+	COLOR.a *= colour.a; //finally, multiply by the opacity of the colour
 
 }
 
 //copied out from an error.glsl file so that I can actually edit these
-//g because gas smile
+//g because gas :)
 highp vec2 gRandom(highp vec2 uv){
     uv = vec2( dot(uv, vec2(127.1,311.7) ),
                dot(uv, vec2(269.5,183.3) ) );

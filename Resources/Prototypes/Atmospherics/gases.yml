@@ -36,7 +36,7 @@
   molarMass: 120
   gasOverlaySprite: /Textures/Effects/atmospherics.rsi
   gasOverlayState: plasma_atmos
-  color: FF6BE3 # imp edit - make it actually pink so it shows up good in-world. old was FF3300
+  color: FF6BE3 # imp edit - made it actually pink so it shows up good in-world. old was FF3300
   reagent: Plasma
   pricePerMole: 0
   shader: BasicGasShader # imp edit - use the gas shader 
@@ -100,7 +100,7 @@
   gasOverlaySprite: /Textures/Effects/atmospherics.rsi
   gasOverlayState: frezon_atmos
   gasMolesVisible: 0.6
-  color: 2BB6AF #imp edit - make it brighter show it shows up better in-world. old value was 3a758c.
+  color: 2BB6AF #imp edit - made it brighter show it shows up better in-world. old value was 3a758c.
   reagent: Frezon
   pricePerMole: 3
   shader: BasicGasShader # imp edit - use the gas shader 
