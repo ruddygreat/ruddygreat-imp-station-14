@@ -8,6 +8,7 @@ using Content.Shared.Atmos.Prototypes;
 using Robust.Client.GameObjects;
 using Robust.Client.Graphics;
 using Robust.Client.ResourceManagement;
+using Robust.Client.Utility;
 using Robust.Shared.Enums;
 using Robust.Shared.Graphics.RSI;
 using Robust.Shared.Map;
@@ -64,7 +65,7 @@ namespace Content.Client.Atmos.Overlays
             _frames = new Texture[_gasCount][];
 
             _gasShaders = new ShaderInstance?[_gasCount]; //imp addition
-            _gasColours = new Color[_gasCount];
+            _gasColours = new Color[_gasCount]; //imp addition
 
             for (var i = 0; i < _gasCount; i++)
             {
@@ -76,7 +77,11 @@ namespace Content.Client.Atmos.Overlays
                 _gasColours[i] = gasPrototype.Color == string.Empty ? Color.White : Color.FromHex("#" + gasPrototype.Color);
                 if (!string.IsNullOrEmpty(gasPrototype.Shader))
                 {
-                    _gasShaders[i] = protoMan.Index<ShaderPrototype>(gasPrototype.Shader).InstanceUnique();
+                    var shader = protoMan.Index<ShaderPrototype>(gasPrototype.Shader).InstanceUnique();
+                    shader.SetParameter("noise_0", spriteSys.Frame0(new SpriteSpecifier.Texture(new ResPath("/Textures/_Impstation/Noise/perlin_noise.rsi/noise_0.png"))));
+                    shader.SetParameter("noise_1", spriteSys.Frame0(new SpriteSpecifier.Texture(new ResPath("/Textures/_Impstation/Noise/perlin_noise.rsi/noise_1.png"))));
+                    shader.SetParameter("noise_2", spriteSys.Frame0(new SpriteSpecifier.Texture(new ResPath("/Textures/_Impstation/Noise/perlin_noise.rsi/noise_2.png"))));
+                    _gasShaders[i] = shader;
                 }
                 else
                 {
@@ -256,10 +261,7 @@ namespace Content.Client.Atmos.Overlays
                                         //else, use the shader
                                         //todo think really hard about how to make this look gooder
                                         //will want a shader per-gas?
-                                        //todo will want to figure out how to get a noise tex to the shader instead of calculating the noise for every tile every frame
                                         var colour = state.colours[i].WithAlpha(opacity); //get the colour
-                                        state.gasShaders[i]!.SetParameter("colour", colour);
-                                        state.gasShaders[i]!.SetParameter("offset", new Vector2(tilePosition.X, tilePosition.Y)); //todo make this make the effect tile seamlessly
                                         state.drawHandle.UseShader(state.gasShaders[i]); //actually activate the shader
                                         state.drawHandle.DrawRect(new Box2(tilePosition, new Vector2(tilePosition.X + 1f, tilePosition.Y + 1f)), colour); //draw the rect
                                         state.drawHandle.UseShader(null); //reset the shader after drawing the rect so that other gases don't get overwritten
