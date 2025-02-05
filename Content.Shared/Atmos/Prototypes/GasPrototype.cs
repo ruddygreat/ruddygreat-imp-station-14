@@ -87,13 +87,19 @@ namespace Content.Shared.Atmos.Prototypes
         /// <summary>
         /// imp edit - the id of the shader that this gas should use for rendering. if this is not null or empty, then the specified texture will be assumed to be a noise texture.
         /// </summary>
-        [DataField("shader")]
+        [DataField]
         public string Shader = string.Empty;
+
+        /// <summary>
+        /// imp edit - the path to the rsi that the noise texture(s) this gases uses are in. must be filled out if shader != empty. the actual textures must be named "noise_0" through "noise_NoiseLayers".
+        /// </summary>
+        [DataField]
+        public string NoiseTexture = string.Empty;
 
         /// <summary>
         /// imp edit - the number of layers of noise. only used if shader != null. the gas overlay automatically searches for the various noise texture RSI states using this.
         /// </summary>
-        [DataField("noiseLayers")]
+        [DataField]
         public int NoiseLayers = 0;
     }
 }

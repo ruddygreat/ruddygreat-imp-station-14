@@ -7,3 +7,8 @@
   id: BasicGasShader
   kind: source
   path: "/Textures/_Impstation/Shaders/basic_gas_shader.swsl"
+
+- type: shader
+  id: PlasmaGasShader
+  kind: source
+  path: "/Textures/_Impstation/Shaders/plasma_gas_shader.swsl"

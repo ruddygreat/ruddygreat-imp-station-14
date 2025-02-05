@@ -78,9 +78,11 @@ namespace Content.Client.Atmos.Overlays
                 if (!string.IsNullOrEmpty(gasPrototype.Shader))
                 {
                     var shader = protoMan.Index<ShaderPrototype>(gasPrototype.Shader).InstanceUnique();
-                    shader.SetParameter("noise_0", spriteSys.Frame0(new SpriteSpecifier.Texture(new ResPath("/Textures/_Impstation/Noise/perlin_noise.rsi/noise_0.png"))));
-                    shader.SetParameter("noise_1", spriteSys.Frame0(new SpriteSpecifier.Texture(new ResPath("/Textures/_Impstation/Noise/perlin_noise.rsi/noise_1.png"))));
-                    shader.SetParameter("noise_2", spriteSys.Frame0(new SpriteSpecifier.Texture(new ResPath("/Textures/_Impstation/Noise/perlin_noise.rsi/noise_2.png"))));
+                    for (var n = 0; n < gasPrototype.NoiseLayers; n++)
+                    {
+                        var layerName = $"noise_{n}";
+                        shader.SetParameter(layerName, spriteSys.Frame0(new SpriteSpecifier.Texture(new ResPath(gasPrototype.NoiseTexture + "/" + layerName + ".png"))));
+                    }
                     _gasShaders[i] = shader;
                 }
                 else
@@ -262,6 +264,7 @@ namespace Content.Client.Atmos.Overlays
                                         //todo think really hard about how to make this look gooder
                                         //will want a shader per-gas?
                                         var colour = state.colours[i].WithAlpha(opacity); //get the colour
+                                        state.gasShaders[i]!.SetParameter("colour", colour);
                                         state.drawHandle.UseShader(state.gasShaders[i]); //actually activate the shader
                                         state.drawHandle.DrawRect(new Box2(tilePosition, new Vector2(tilePosition.X + 1f, tilePosition.Y + 1f)), colour); //draw the rect
                                         state.drawHandle.UseShader(null); //reset the shader after drawing the rect so that other gases don't get overwritten

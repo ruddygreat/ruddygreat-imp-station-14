@@ -39,7 +39,9 @@
   color: FF6BE3 # imp edit - made it actually pink so it shows up good in-world. old was FF3300
   reagent: Plasma
   pricePerMole: 0
-  shader: BasicGasShader # imp edit - use the gas shader 
+  shader: PlasmaGasShader # imp edit - use the gas shader
+  noiseTexture: /Textures/_Impstation/Noise/perlin_noise.rsi
+  noiseLayers: 3
 
 - type: gas
   id: 4
@@ -52,7 +54,9 @@
   color: 75E536 # imp edit - he's geen. old was 13FF4B
   reagent: Tritium
   pricePerMole: 2
-  shader: BasicGasShader # imp edit - use the gas shader 
+  shader: BasicGasShader # imp edit - use the gas shader
+  noiseTexture: /Textures/_Impstation/Noise/perlin_noise.rsi
+  noiseLayers: 3
 
 - type: gas
   id: 5
@@ -61,11 +65,13 @@
   heatCapacityRatio: 1.33
   molarMass: 18
   gasOverlaySprite: /Textures/Effects/atmospherics.rsi
-  gasOverlayState: water_vapor_atmos 
+  gasOverlayState: water_vapor_atmos
   color: bffffd # imp note maybe change this away from a light blue?
   reagent: Water
   pricePerMole: 0
-  shader: BasicGasShader # imp edit - use the gas shader 
+  shader: BasicGasShader # imp edit - use the gas shader
+  noiseTexture: /Textures/_Impstation/Noise/perlin_noise.rsi
+  noiseLayers: 3
 
 - type: gas
   id: 6
@@ -103,4 +109,6 @@
   color: 2BB6AF #imp edit - made it brighter show it shows up better in-world. old value was 3a758c.
   reagent: Frezon
   pricePerMole: 3
-  shader: BasicGasShader # imp edit - use the gas shader 
+  shader: BasicGasShader # imp edit - use the gas shader
+  noiseTexture: /Textures/_Impstation/Noise/perlin_noise.rsi
+  noiseLayers: 3
