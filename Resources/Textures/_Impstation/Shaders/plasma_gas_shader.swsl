@@ -12,79 +12,10 @@ void fragment() {
 	highp vec2 rem = vec2(mod(UV.x, multiple), mod(UV.y, multiple));
 	highp vec2 rounded = UV - rem; //downsample to a 32 * 32 grid for stylistic consistency
 
-    //highp vec2 noise0SamplePos = rounded + TIME * 0.1;
-
 	COLOR = 0.4 * texture(noise_0, loopVec(vec2(rounded.x + sin(rounded.y * 4.0 + TIME * 0.1), rounded.y)));
 	COLOR += 0.3 * texture(noise_1, loopVec(rounded - TIME * 0.1));
 	COLOR += 0.3 * texture(noise_2, loopVec(rounded + 0.3)); //tiny offset so it's not identical to other gases
 }
-
-//this doesn't work for some reason. fuck.
-/*
-highp vec4 rgb2hsv(highp vec4 rgb) {
-
-    highp float maxVal = max(rgb.r, max(rgb.g, rgb.b));
-    highp float minVal = min(rgb.r, min(rgb.g, rgb.b));
-    highp float c = maxVal - minVal;
-
-    highp float f = 0.0;
-    if (c != 0) {
-        if (max == rgb.r) {
-            h = (rgb.g - rgb.b) / c % 0.6;
-            if (h > 0.0) {
-                h += 6.0;
-            }
-        } else if (max == rgb.g) {
-            h = (rgb.b - rgb.r) / c + 2.0f;
-        } else if (max == rgb.b) {
-            h = (rgb.R - rgb.G) / c + 4.0f;
-        }
-    }
-
-    highp float hue = h * 60.0 / 360.0;
-
-    highp float saturation = 0.0;
-    if (max != 0.0) {
-        saturation = c / max;
-    }
-
-    return vec4(hue, saturation, max, rgb.a);
-}
-*/
-
-/*
-highp vec4 hsv2rgb(highp vec4 hsv) {
-
-    highp float c = hsv.z * hsv.y;
-
-    highp float h = hsv.x / 60.0;
-    highp float x = c * (1.0 - abs(mod(2.0, h) - 1));
-
-    highp vec3 rgb = 0.0;
-    if (0.0 <= h && h < 1.0) {
-        rgb.r = c;
-        rgb.b = x;
-    } else if (1.0 <= h && h < 2.0) {
-        rgb.r = x;
-        rgb.b = c;
-    } else if (2.0 <=h && h < 3.0) {
-        rgb.g = c;
-        rgb.b = x;
-    } else if (3.0 <= h && h < 4.0) {
-        rgb.g = x;
-        rgb.b = c;
-    } else if (4.0 <= h && h < 5.0) {
-        rgb.r = x;
-        rgb.b = c;
-    }  else if (5.0 <= h && h < 6.0) {
-        rgb.r = c;
-        rgb.b = x;
-    }
-
-    highp float m = hsv.z - c;
-    return vec4(rgb, hsv.a);
-}
-*/
 
 //hate that I have to do this because we can't just set the loop behaviour on the texture
 highp vec2 loopVec(highp vec2 toLoop) {

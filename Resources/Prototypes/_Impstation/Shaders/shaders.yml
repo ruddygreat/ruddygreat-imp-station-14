@@ -16,10 +16,10 @@
 - type: shader
   id: TritiumGasShader
   kind: source
-  path: "/Textures/_Impstation/Shaders/basic_gas_shader.swsl"
+  path: "/Textures/_Impstation/Shaders/tritium_gas_shader.swsl"
   #todo give this two colours to fade between
 
 - type: shader
   id: FrezonGasShader
   kind: source
-  path: "/Textures/_Impstation/Shaders/basic_gas_shader.swsl"
+  path: "/Textures/_Impstation/Shaders/frezon_gas_shader.swsl"

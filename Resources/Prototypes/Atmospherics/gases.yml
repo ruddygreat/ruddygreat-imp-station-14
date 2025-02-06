@@ -55,7 +55,7 @@
   reagent: Tritium
   pricePerMole: 2
   shader: TritiumGasShader # imp edit - use the gas shader
-  noiseTexture: /Textures/_Impstation/Noise/perlin_noise.rsi # imp edit - set the noise tex
+  noiseTexture: /Textures/_Impstation/Noise/perlin_noise.rsi #/Textures/_Impstation/Noise/voronoi_noise_closest.rsi # imp edit - set the noise tex
   noiseLayers: 3 # imp edit - specify how many noise layers there are
 
 - type: gas
@@ -110,5 +110,5 @@
   reagent: Frezon
   pricePerMole: 3
   shader: FrezonGasShader # imp edit - use the gas shader
-  noiseTexture: /Textures/_Impstation/Noise/perlin_noise.rsi #imp edit - set the noise tex # todo make this use voronoi noise
+  noiseTexture: /Textures/_Impstation/Noise/perlin_noise.rsi #/Textures/_Impstation/Noise/voronoi_noise_second.rsi #imp edit - set the noise tex # todo make this use voronoi noise
   noiseLayers: 3 #imp edit - specify how many noise layers there are
