@@ -268,7 +268,7 @@ namespace Content.Client.Atmos.Overlays
                                         var colour = state.colours[i].WithAlpha(opacity); //get the colour
                                         state.gasShaders[i]!.SetParameter("colour", colour);
                                         state.drawHandle.UseShader(state.gasShaders[i]); //actually activate the shader
-                                        state.drawHandle.DrawRect(new Box2(tilePosition, new Vector2(tilePosition.X + 1f, tilePosition.Y + 1f)), colour); //draw the rect
+                                        state.drawHandle.DrawRect(new Box2(tilePosition, new Vector2(tilePosition.X + 1f, tilePosition.Y + 1f)), Color.White); //draw the rect
                                         state.drawHandle.UseShader(null); //reset the shader after drawing the rect so that non-shader gases don't get overwritten
                                     }
                                     //imp edit end

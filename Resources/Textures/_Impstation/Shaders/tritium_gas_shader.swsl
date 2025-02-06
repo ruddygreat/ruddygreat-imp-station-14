@@ -12,15 +12,20 @@ void fragment() {
 	highp vec2 rem = vec2(mod(UV.x, multiple), mod(UV.y, multiple));
 	highp vec2 rounded = UV - rem; //downsample to a 32 * 32 grid for stylistic consistency
 
-	COLOR = 0.25 * texture(noise_0, loopVec(vec2(rounded.x + 0.2 + TIME * 0.2, rounded.y)));
-	COLOR += 0.25 * texture(noise_0, loopVec(vec2(rounded.x + 0.5 - TIME * 0.2, rounded.y)));
-	COLOR += 0.25 * texture(noise_0, loopVec(vec2(rounded.x, rounded.y + 0.1 - TIME * 0.2)));
-	COLOR += 0.25 * texture(noise_0, loopVec(vec2(rounded.x, rounded.y + 0.7 + TIME * 0.2)));
+	COLOR = 0.25 * texture(noise_0, loopVec(vec2(rounded.x + 0.2 + TIME * 0.2, rounded.y + 0.1)));
+	COLOR += 0.25 * texture(noise_0, loopVec(vec2(rounded.x - 0.5 - TIME * 0.2, rounded.y - 0.75)));
+	COLOR += 0.25 * texture(noise_0, loopVec(vec2(rounded.x - 0.8, rounded.y + 0.1 - TIME * 0.2)));
+	COLOR += 0.25 * texture(noise_0, loopVec(vec2(rounded.x + 0.6 , rounded.y + 0.7 + TIME * 0.2)));
 
     highp vec3 asHSV = rgb2hsv(COLOR.rgb);
     asHSV.y += sin(TIME) * 0.25;
-    asHSV.z *= 1.0 + (COLOR.a * COLOR.a * COLOR.a * COLOR.a); //todo need to figure out a way to make brighter spots much brighter while keeping darker spots dark?
+    asHSV.z *= 1.0 + (COLOR.a * COLOR.a * COLOR.a);//todo need to figure out a way to make brighter spots much brighter while keeping darker spots dark?
 	COLOR = vec4(hsv2rgb(asHSV), COLOR.a);
+	COLOR *= colour;
+
+    //COLOR = vec4(1.0, 0.0, 1.0, 1.0);
+
+	//COLOR = vec4(hsv2rgb(vec3(UV.x, 1.0, 1.0)), 1.0);
 }
 
 //this produces really fucking wierd results if you just look at the ouput but it apparently works?
@@ -39,117 +44,6 @@ highp vec3 hsv2rgb(highp vec3 c) {
     highp vec3 p = abs(fract(c.xxx + K.xyz) * 6.0 - K.www);
     return c.z * mix(K.xxx, clamp(p - K.xxx, 0.0, 1.0), c.y);
 }
-
-/*
-highp vec4 rgb2hsv(highp vec4 rgb) {
-
-    highp float maxVal = max(rgb.r, max(rgb.g, rgb.b));
-    highp float minVal = min(rgb.r, min(rgb.g, rgb.b));
-    highp float c = maxVal - minVal;
-
-    highp float f = 0.0;
-    highp float h = 0.0;
-    if (c != 0) {
-        if (maxVal == rgb.r) {
-            h = mod((rgb.g - rgb.b) / c, 0.6);
-            if (h > 0.0) {
-                h += 6.0;
-            }
-        } else if (maxVal == rgb.g) {
-            h = (rgb.b - rgb.r) / c + 2.0;
-        } else if (maxVal == rgb.b) {
-            h = (rgb.r - rgb.g) / c + 4.0;
-        }
-    }
-
-    highp float hue = h * 60.0 / 360.0;
-
-    highp float saturation = 0.0;
-    if (maxVal != 0.0) {
-        saturation = c / maxVal;
-    }
-
-    return vec4(hue, saturation, maxVal, rgb.a);
-}
-
-//aaeugh! why does this work in a web editor but not in-game! I'm going to go insane!
-highp vec4 hsv2rgb(highp vec4 hsv) {
-
-    highp float i = floor(hsv.x * 6.0);
-    highp float f = hsv.x * 6.0 - i;
-    highp float p = hsv.z * (1.0 - hsv.y);
-    highp float q = hsv.z * (1.0 - f * hsv.y);
-    highp float t = hsv.z * (1.0 - (1.0 - f) * hsv.y);
-
-    highp vec3 rgb = vec3(0.0);
-
-    if (0.0 <= i && i < 1.0) {
-        rgb.r = hsv.z;
-        rgb.g = t;
-        rgb.b = p;
-    } else if (1.0 <= i && i < 2.0) {
-        rgb.r = q;
-        rgb.g = hsv.z;
-        rgb.b = p;
-    } else if (2.0 <= i && i < 3.0) {
-        rgb.r = p;
-        rgb.g = hsv.z;
-        rgb.b = t;
-    } else if (3.0 <= i && i < 4.0) {
-        rgb.r = p;
-        rgb.g = q;
-        rgb.b = hsv.z;
-    } else if (4.0 <= i && i < 5.0) {
-        rgb.r = t;
-        rgb.g = p;
-        rgb.b = hsv.z;
-    } else if (5.0 <= i && i < 6.0) {
-        rgb.r = hsv.z;
-        rgb.g = p;
-        rgb.b = q;
-    }
-
-/*
-    highp float hue = (hsv.x - trunc(hsv.x)) * 360.0;
-    highp float saturation = hsv.y;
-    highp float value = hsv.z;
-
-    highp float c = value * saturation;
-    highp float h = hue / 60.0;
-    highp float x = 1.0 - abs(mod(h, 2.0) - 1.0);
-
-    highp vec3 rgb = vec3(0.0);
-
-    if (0.0 <= h && h < 1.0) {
-        rgb.r = c;
-        rgb.g = x;
-        rgb.b = 0.0;
-    } else if (1.0 <= h && h < 2.0) {
-        rgb.r = x;
-        rgb.g = c;
-        rgb.b = 0.0;
-    } else if (2.0 <= h && h < 3.0) {
-        rgb.r = 0.0;
-        rgb.g = c;
-        rgb.b = x;
-    } else if (3.0 <= h && h < 4.0) {
-        rgb.r = 0.0;
-        rgb.g = x;
-        rgb.b = c;
-    } else if (4.0 <= h && h < 5.0) {
-        rgb.r = x;
-        rgb.g = 0.0;
-        rgb.b = c;
-    } else if (5.0 <= h && h < 6.0) {
-        rgb.r = c;
-        rgb.g = 0.0;
-        rgb.b = x;
-    }
-*/
-
-    return vec4(rgb, hsv.a);
-}
-*/
 
 //hate that I have to do this because we can't just set the loop behaviour on the texture
 highp vec2 loopVec(highp vec2 toLoop) {

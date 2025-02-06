@@ -15,10 +15,11 @@ void fragment() {
 	COLOR = 0.4 * texture(noise_0, loopVec(rounded + TIME * 0.1));
 	COLOR += 0.3 * texture(noise_1, loopVec(rounded - TIME * 0.1));
 	COLOR += 0.3 * texture(noise_2, loopVec(rounded));
+	COLOR *= colour;
 }
 
-//hate that I have to do this because we can't just 
-highp vec2 loopVec(highp vec2 toLoop) { 
+//hate that I have to do this because we can't just
+highp vec2 loopVec(highp vec2 toLoop) {
     return vec2(mod(toLoop.x, 1), mod(toLoop.y, 1));
 }
 

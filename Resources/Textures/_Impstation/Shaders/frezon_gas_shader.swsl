@@ -15,6 +15,8 @@ void fragment() {
 	COLOR = 0.4 * texture(noise_0, loopVec(vec2(rounded.x, rounded.y + TIME * 0.2)));
 	COLOR += 0.3 * texture(noise_1, loopVec(vec2(rounded.x - TIME * 0.2, rounded.y)));
 	COLOR += 0.3 * texture(noise_2, loopVec(vec2(rounded.x, rounded.y + TIME * 0.2)));
+	COLOR *= colour;
+
 	//COLOR += 0.25 * texture(noise_0, loopVec(vec2(rounded.x, rounded.y - TIME * 0.2)));
 	//COLOR += 0.3 * texture(noise_1, loopVec(rounded - TIME * 0.1));
 	//COLOR += 0.3 * texture(noise_2, loopVec(rounded + 0.3)); //tiny offset so it's not identical to other gases
