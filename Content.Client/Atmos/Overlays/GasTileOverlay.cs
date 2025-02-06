@@ -80,7 +80,7 @@ namespace Content.Client.Atmos.Overlays
                     var shader = protoMan.Index<ShaderPrototype>(gasPrototype.Shader).InstanceUnique();
                     for (var n = 0; n < gasPrototype.NoiseLayers; n++)
                     {
-                        var layerName = $"noise_{n}";
+                        var layerName = $"noise_{n}"; //slightly hacky way of assigning noise texture samplers but I'll probably be the only person who ever touches this.
                         shader.SetParameter(layerName, spriteSys.Frame0(new SpriteSpecifier.Texture(new ResPath(gasPrototype.NoiseTexture + "/" + layerName + ".png"))));
                     }
                     _gasShaders[i] = shader;
@@ -97,6 +97,7 @@ namespace Content.Client.Atmos.Overlays
                     overlay = new SpriteSpecifier.Texture(new (gasPrototype.GasOverlayTexture));
                 else
                     continue;
+
 
                 switch (overlay)
                 {
@@ -136,6 +137,10 @@ namespace Content.Client.Atmos.Overlays
 
             for (var i = 0; i < _gasCount; i++)
             {
+
+                if (_gasShaders[i] != null)
+                    continue; //imp edit - if this gas uses a shader, don't bother trying to find the next frame
+
                 var delays = _frameDelays[i];
                 if (delays.Length == 0)
                     continue;
@@ -260,14 +265,11 @@ namespace Content.Client.Atmos.Overlays
                                     }
                                     else
                                     {
-                                        //else, use the shader
-                                        //todo think really hard about how to make this look gooder
-                                        //will want a shader per-gas?
                                         var colour = state.colours[i].WithAlpha(opacity); //get the colour
                                         state.gasShaders[i]!.SetParameter("colour", colour);
                                         state.drawHandle.UseShader(state.gasShaders[i]); //actually activate the shader
                                         state.drawHandle.DrawRect(new Box2(tilePosition, new Vector2(tilePosition.X + 1f, tilePosition.Y + 1f)), colour); //draw the rect
-                                        state.drawHandle.UseShader(null); //reset the shader after drawing the rect so that other gases don't get overwritten
+                                        state.drawHandle.UseShader(null); //reset the shader after drawing the rect so that non-shader gases don't get overwritten
                                     }
                                     //imp edit end
                                 }

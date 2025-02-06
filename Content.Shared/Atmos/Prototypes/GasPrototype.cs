@@ -85,7 +85,7 @@ namespace Content.Shared.Atmos.Prototypes
         public float PricePerMole { get; set; } = 0;
 
         /// <summary>
-        /// imp edit - the id of the shader that this gas should use for rendering. if this is not null or empty, then the specified texture will be assumed to be a noise texture.
+        /// imp edit - the id of the shader that this gas should use for rendering.
         /// </summary>
         [DataField]
         public string Shader = string.Empty;
