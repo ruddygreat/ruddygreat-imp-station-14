@@ -20,7 +20,7 @@ void fragment() {
 
 //hate that I have to do this because we can't just
 highp vec2 loopVec(highp vec2 toLoop) {
-    return vec2(mod(toLoop.x, 1), mod(toLoop.y, 1));
+    return abs(mod(toLoop, 1));;
 }
 
 //copied out from an error.glsl file so that I can actually edit these

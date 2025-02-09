@@ -8,27 +8,36 @@ const highp float tileSize = 32.0;
 
 void fragment() {
 
-	highp float multiple = (1.0 / tileSize);
-	highp vec2 rem = vec2(mod(UV.x, multiple), mod(UV.y, multiple));
-	highp vec2 rounded = UV - rem; //downsample to a 32 * 32 grid for stylistic consistency
+    //todo : experiment with alpha quantisation like how I done did it with the uvs
+    //todo : get a better colour for water vapour
+    //todo : figure out how to make the brighter spots significantly brighter while leaving darker spots untouched
 
-	COLOR = 0.25 * texture(noise_0, loopVec(vec2(rounded.x + 0.2 + TIME * 0.2, rounded.y + 0.1)));
-	COLOR += 0.25 * texture(noise_0, loopVec(vec2(rounded.x - 0.5 - TIME * 0.2, rounded.y - 0.75)));
-	COLOR += 0.25 * texture(noise_0, loopVec(vec2(rounded.x - 0.8, rounded.y + 0.1 - TIME * 0.2)));
-	COLOR += 0.25 * texture(noise_0, loopVec(vec2(rounded.x + 0.6 , rounded.y + 0.7 + TIME * 0.2)));
+	highp vec2 rounded = quantiseVecDown(UV, tileSize); //downsample to a 32 * 32 grid for stylistic consistency
+
+	COLOR = 0.25 * texture(noise_0, loopVec(vec2(rounded.x + 0.2 + TIME * 0.3, rounded.y)));
+	COLOR += 0.25 * texture(noise_0, loopVec(vec2(rounded.x - 0.5 - TIME * 0.3, rounded.y)));
+	COLOR += 0.25 * texture(noise_0, loopVec(vec2(rounded.x, rounded.y + 0.1 - TIME * 0.3)));
+	COLOR += 0.25 * texture(noise_0, loopVec(vec2(rounded.x, rounded.y + 0.7 + TIME * 0.3)));
 
     highp vec3 asHSV = rgb2hsv(COLOR.rgb);
-    asHSV.y += sin(TIME) * 0.25;
+    asHSV.y -= sin(TIME * 0.5) * 0.25;
     asHSV.z *= 1.0 + (COLOR.a * COLOR.a * COLOR.a);//todo need to figure out a way to make brighter spots much brighter while keeping darker spots dark?
 	COLOR = vec4(hsv2rgb(asHSV), COLOR.a);
 	COLOR *= colour;
-
-    //COLOR = vec4(1.0, 0.0, 1.0, 1.0);
-
-	//COLOR = vec4(hsv2rgb(vec3(UV.x, 1.0, 1.0)), 1.0);
 }
 
-//this produces really fucking wierd results if you just look at the ouput but it apparently works?
+highp vec2 quantiseVecDown(highp vec2 v, highp float divisions) {
+    highp float multiple = 1.0 / divisions;
+    highp vec2 rem = mod(v, multiple);
+    return v - rem;
+}
+
+highp float quantiseFloatDown(highp float f, highp float divisions) {
+    highp float multiple = 1.0 / divisions;
+    highp float rem = mod(f, multiple);
+    return f - rem;
+}
+
 highp vec3 rgb2hsv(highp vec3 c) {
     highp vec4 K = vec4(0.0, -1.0 / 3.0, 2.0 / 3.0, -1.0);
     highp vec4 p = mix(vec4(c.bg, K.wz), vec4(c.gb, K.xy), step(c.b, c.g));
@@ -47,7 +56,7 @@ highp vec3 hsv2rgb(highp vec3 c) {
 
 //hate that I have to do this because we can't just set the loop behaviour on the texture
 highp vec2 loopVec(highp vec2 toLoop) {
-    return vec2(abs(mod(toLoop.x, 1)), abs(mod(toLoop.y, 1)));
+    return abs(mod(toLoop, 1));
 }
 
 //copied out from an error.glsl file so that I can actually edit these
