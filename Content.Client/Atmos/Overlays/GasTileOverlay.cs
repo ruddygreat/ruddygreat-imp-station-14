@@ -334,8 +334,21 @@ namespace Content.Client.Atmos.Overlays
                     {
                         var opacity = atmos.OverlayData.Opacity[i];
 
-                        if (opacity > 0)
+                        //imp edit start
+                        //if no shader, continue as usual
+                        if (_gasShaders[i] == null)
+                        {
                             handle.DrawTexture(_frames[i][_frameCounter[i]], tilePosition, Color.White.WithAlpha(opacity));
+                        }
+                        else
+                        {
+                            var colour = _gasColours[i].WithAlpha(opacity); //get the colour
+                            _gasShaders[i]!.SetParameter("colour", colour);
+                            handle.UseShader(_gasShaders[i]); //actually activate the shader
+                            handle.DrawRect(new Box2(tilePosition, new Vector2(tilePosition.X + 1f, tilePosition.Y + 1f)), Color.White); //draw the rect
+                            handle.UseShader(null); //reset the shader after drawing the rect so that non-shader gases don't get overwritten
+                        }
+                        //imp edit end
                     }
                 }
             }
