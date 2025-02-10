@@ -8,10 +8,6 @@ const highp float tileSize = 32.0;
 
 void fragment() {
 
-    //todo : experiment with alpha quantisation like how I done did it with the uvs?
-    //todo : get a better colour for water vapour
-    //todo : figure out how to make the brighter spots significantly brighter while leaving darker spots untouched
-
 	highp vec2 rounded = quantiseVecDown(UV, tileSize); //downsample to a 32 * 32 grid for stylistic consistency
 
 	COLOR = 0.25 * texture(noise_0, loopVec(vec2(rounded.x + 0.2 + TIME * 0.3, rounded.y)));
@@ -58,25 +54,3 @@ highp vec3 hsv2rgb(highp vec3 c) {
 highp vec2 loopVec(highp vec2 toLoop) {
     return abs(mod(toLoop, 1));
 }
-
-//copied out from an error.glsl file so that I can actually edit these
-//g because gas :)
-highp vec2 gRandom(highp vec2 uv){
-    uv = vec2( dot(uv, vec2(127.1,311.7) ),
-               dot(uv, vec2(269.5,183.3) ) );
-    return -1.0 + 2.0 * fract(sin(uv) * 43758.5453123);
-}
-
-highp float gNoise(highp vec2 uv) {
-
-    highp vec2 uv_index = floor(uv);
-    highp vec2 uv_fract = fract(uv);
-
-    highp vec2 blur = uv_fract * uv_fract * (3.0 - 2.0 * uv_fract);
-
-    return mix( mix( dot( gRandom(uv_index + vec2(0.0,0.0) ), uv_fract - vec2(0.0,0.0) ),
-                     dot( gRandom(uv_index + vec2(1.0,0.0) ), uv_fract - vec2(1.0,0.0) ), blur.x),
-                mix( dot( gRandom(uv_index + vec2(0.0,1.0) ), uv_fract - vec2(0.0,1.0) ),
-                     dot( gRandom(uv_index + vec2(1.0,1.0) ), uv_fract - vec2(1.0,1.0) ), blur.x), blur.y) * 0.5 + 0.5;
-}
-
