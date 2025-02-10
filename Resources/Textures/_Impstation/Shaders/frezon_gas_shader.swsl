@@ -12,10 +12,11 @@ void fragment() {
 	highp vec2 rem = vec2(mod(UV.x, multiple), mod(UV.y, multiple));
 	highp vec2 rounded = UV - rem; //downsample to a 32 * 32 grid for stylistic consistency
 
-	COLOR = 0.4 * texture(noise_0, loopVec(vec2(rounded.x + sin(rounded.y * 4.0 + TIME * 0.1), rounded.y + sin(rounded.x * 4.0 + TIME * 0.1))));
-	COLOR += 0.2 * texture(noise_0, loopVec(vec2(rounded.x + sin(rounded.y * 4.0 + TIME * 0.1), rounded.y)));
-	COLOR += 0.2 * texture(noise_0, loopVec(vec2(rounded.x, rounded.y + sin(rounded.x * 4.0 + TIME * 0.1)))); //tiny offset so it's not identical to other gases
-	COLOR += 0.2 * texture(noise_2, loopVec(vec2(rounded.x, rounded.y + TIME * 0.2)));
+    //note to self if I want to change things back - was .4, .2, .2, .2
+	COLOR = 0.25 * texture(noise_0, loopVec(vec2(rounded.x + sin(rounded.y * 4.0 + TIME * 0.1), rounded.y + sin(rounded.x * 4.0 + TIME * 0.1))));
+	COLOR += 0.25 * texture(noise_0, loopVec(vec2(rounded.x + sin(rounded.y * 4.0 + TIME * 0.1), rounded.y)));
+	COLOR += 0.25 * texture(noise_0, loopVec(vec2(rounded.x, rounded.y + sin(rounded.x * 4.0 + TIME * 0.1))));
+	COLOR += 0.25 * texture(noise_2, loopVec(vec2(rounded.x, rounded.y + TIME * 0.2)));
 	COLOR *= colour;
 	highp vec3 asHSV = rgb2hsv(COLOR.rgb);
 	COLOR.rgb = hsv2rgb(asHSV + vec3(0.0, 0.0, asHSV.z * asHSV.z));

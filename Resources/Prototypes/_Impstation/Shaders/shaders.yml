@@ -23,3 +23,8 @@
   id: FrezonGasShader
   kind: source
   path: "/Textures/_Impstation/Shaders/frezon_gas_shader.swsl"
+
+- type: shader
+  id: AmmoniaGasShader
+  kind: source
+  path: "/Textures/_Impstation/Shaders/ammonia_gas_shader.swsl"
