@@ -14,6 +14,7 @@ using Robust.Client.UserInterface.Controls;
 using Robust.Client.UserInterface.XAML;
 using Robust.Shared.Configuration;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Timing;
 
 namespace Content.Client._Impstation.CosmicCult.UI.Monument;
 [GenerateTypedNameReferences]
@@ -70,7 +71,7 @@ public sealed partial class MonumentMenu : FancyWindow
         UpdateBar(state);
         UpdateEntropy(state);
         UpdateGlyphs();
-        UpdateInfluences(state);
+        UpdateInfluences();
     }
 
     // Update all the entropy fields
@@ -139,14 +140,14 @@ public sealed partial class MonumentMenu : FancyWindow
     }
 
     // Update all the influence thingies
-    private void UpdateInfluences(MonumentBuiState state)
+    private void UpdateInfluences()
     {
         InfluencesContainer.RemoveAllChildren();
 
         var influenceUIBoxes = new List<InfluenceUIBox>();
         foreach (var influence in _influencePrototypes)
         {
-            var uiBoxState = GetUIBoxStateForInfluence(influence, state);
+            var uiBoxState = GetUIBoxStateForInfluence(influence);
             var influenceBox = new InfluenceUIBox(influence, uiBoxState);
             influenceUIBoxes.Add(influenceBox);
             influenceBox.OnGainButtonPressed += () => OnGainButtonPressed?.Invoke(influence.ID);
@@ -164,7 +165,7 @@ public sealed partial class MonumentMenu : FancyWindow
         }
     }
 
-    private InfluenceUIBox.InfluenceUIBoxState GetUIBoxStateForInfluence(InfluencePrototype influence, MonumentBuiState state)
+    private InfluenceUIBox.InfluenceUIBoxState GetUIBoxStateForInfluence(InfluencePrototype influence)
     {
         if (!_entityManager.TryGetComponent<CosmicCultComponent>(_playerManager.LocalEntity, out var cultComp)) //this feels wrong but seems to be the correct way to do this?
             return InfluenceUIBox.InfluenceUIBoxState.Locked; //early return with locked if there's somehow no cult comp
