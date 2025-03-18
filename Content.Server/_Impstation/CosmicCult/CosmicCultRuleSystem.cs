@@ -459,7 +459,7 @@ public sealed class CosmicCultRuleSystem : GameRuleSystem<CosmicCultRuleComponen
         Dirty(uid);
 
         //janky hacks time - ruddygreat
-        //defer the UI state sending until the next frame
+        //delay the UI state sending until the next frame
         //this works but is morally kinda evil, I have no idea how it got broken if this is the fix
         //todo an actual fix for this? I have no idea if that's possible
         Timer.Spawn(TimeSpan.FromMilliseconds(1),
