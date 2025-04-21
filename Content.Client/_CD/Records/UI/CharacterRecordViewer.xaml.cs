@@ -376,7 +376,7 @@ public sealed partial class CharacterRecordViewer : FancyWindow
     private void UpdateRecordBoxEmployment(FullCharacterRecords record)
     {
         RecordContainerEmployment.Visible = true;
-        RecordContainerWorkAuth.Text = record.PRecords.HasWorkAuthorization ? "yes" : "no";
+        RecordContainerWorkAuth.Text = record.PRecords.HasWorkAuthorization ? "Approved" : "Denied"; //imp edit wording change
     }
 
     private void UpdateRecordBoxMedical(FullCharacterRecords record)

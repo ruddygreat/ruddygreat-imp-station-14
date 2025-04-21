@@ -1,14 +1,16 @@
-cd-character-records-viewer-title-employ = Employment Records
+cd-character-records-viewer-title-employ = Employee Records
 cd-character-records-viewer-title-sec = Security Records
 cd-character-records-viewer-title-med = Medical Records
 
 cd-record-viewer-empty-state = Cannot fetch records.
-cd-record-viewer-no-record-selected = Please select record.
+cd-record-viewer-no-record-selected = Please select a file.
 
 cd-character-records-viewer-record-age = Age:
 cd-character-records-viewer-record-job = Job:
-cd-character-records-viewer-record-gender = Gender:
+cd-character-records-viewer-record-gender = Pronouns:
 cd-character-records-viewer-record-species = Species:
+
+#Imp edit minor wording
 
 cd-character-records-viewer-record-sec-fingerprint = Fingerprint:
 cd-character-records-viewer-record-sec-dna = DNA:
