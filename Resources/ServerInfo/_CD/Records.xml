@@ -1,0 +1,40 @@
+<Document>
+
+## Character Records
+
+You can create records for you characters in the records tab of the character
+creator. Simply fill in the values and save. Entries should typically be
+written from the perspective of a CentComm official or other supervisor.
+
+## Employment Entries
+
+Employment Entries should include your character's education, previous jobs, and
+anything that you think Nanotrasen would log about your characters past that is
+not security related.
+
+## Medical Entries
+
+Medical Entries should include anything a doctor should know before treating
+your character, major surgeries, prescriptions, and any psychological evaluations.
+
+## Security Entries
+
+Security Entries should include any major arrests/incidents your character has
+had in their past or while working with Nanotrasen. Minor incidents should
+generally be avoided.
+
+## Accessing Records
+You can access the records of your crewmates in game from their respective consoles.
+
+<Box>
+<GuideEntityEmbed Entity="ComputerMedicalRecords" Caption="Medical"/>
+<GuideEntityEmbed Entity="ComputerCriminalRecords" Caption="Security"/>
+<GuideEntityEmbed Entity="ComputerStationRecords" Caption="Station"/>
+</Box>
+
+Records can only be written in the character customization menu and not during
+a round.
+
+</Document>
+
+<!--Edits by AvianMaiden for Impstation-->
