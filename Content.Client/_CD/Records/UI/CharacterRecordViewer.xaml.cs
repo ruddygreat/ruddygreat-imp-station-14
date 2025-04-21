@@ -314,7 +314,7 @@ public sealed partial class CharacterRecordViewer : FancyWindow
         RecordContainerName.Text = record.Name;
         RecordContainerAge.Text = record.Age.ToString();
         RecordContainerJob.Text = record.JobTitle; /* At some point in the future we might want to display the icon */
-        RecordContainerGender.Text = record.Gender.ToString();
+        RecordContainerGender.Text = Loc.GetString("records-computer-pronouns", ("gender", record.Gender.ToString().ToLowerInvariant()));
         RecordContainerSpecies.Text = record.Species;
         RecordContainerHeight.Text = cr.Height + " " + UnitConversion.GetImperialDisplayLength(cr.Height);
         RecordContainerWeight.Text = cr.Weight + " " + UnitConversion.GetImperialDisplayMass(cr.Weight);
