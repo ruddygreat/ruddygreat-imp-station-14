@@ -4,9 +4,9 @@ humanoid-profile-editor-cd-records-tab = Records
 # General
 humanoid-profile-editor-cd-records-height = Height (cm):
 humanoid-profile-editor-cd-records-weight = Weight (kg):
-humanoid-profile-editor-cd-records-contact-name = Emergency Contact(s):
+humanoid-profile-editor-cd-records-contact-name = Current Location of Residency:
 
-#Imp edit for wording
+# Imp edit for wording; tweaked emergency contacts to residency
 
 # Employment
 humanoid-profile-editor-cd-records-employment = General/Employment
@@ -17,9 +17,11 @@ humanoid-profile-editor-cd-imp-records-years-at-NT = Time at NT (years):
 humanoid-profile-editor-cd-records-identifying-features = Identifying Features:
 
 # Medical
-humanoid-profile-editor-cd-records-allergies = Allergies:
-humanoid-profile-editor-cd-records-drug-allergies = Drug Allergies:
+humanoid-profile-editor-cd-records-allergies = Allergies (incl. Drug):
+humanoid-profile-editor-cd-records-drug-allergies = Patient Medical Concerns:
 humanoid-profile-editor-cd-records-postmortem = Postmortem Instructions:
+
+# Imp edit for wording; tweaked allergies as one, then box for things like DNR or other
 
 # Entries
 humanoid-profile-editor-cd-records-add-entry = Add Entry
