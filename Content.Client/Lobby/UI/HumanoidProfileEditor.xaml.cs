@@ -102,8 +102,6 @@ namespace Content.Client.Lobby.UI
         private bool _isDirty;
 
         // Begin CD - Station Records
-        private float _defaultHeight = 1f;
-
         private readonly RecordEditorGui _recordsTab;
         // End CD - Station Records
 
@@ -231,43 +229,6 @@ namespace Content.Client.Lobby.UI
                 UpdateHairPickers();
                 OnSkinColorOnValueChanged();
             };
-
-            // Begin CD - Character Records
-            #region CDHeight
-
-            CDHeight.OnTextChanged += args =>
-            {
-                if (Profile is null || !float.TryParse(args.Text, out var newHeight))
-                    return;
-
-                var prototype = _prototypeManager.Index<SpeciesPrototype>(Profile.Species);
-                newHeight = MathF.Round(Math.Clamp(newHeight, prototype.MinHeight, prototype.MaxHeight), 2);
-
-                // The percentage between the start and end numbers, aka "inverse lerp"
-                var sliderPercent = (newHeight - prototype.MinHeight) /
-                                    (prototype.MaxHeight - prototype.MinHeight);
-                CDHeightSlider.Value = sliderPercent;
-
-                SetProfileHeight(newHeight);
-            };
-
-            CDHeightReset.OnPressed += _ =>
-            {
-                CDHeight.SetText(_defaultHeight.ToString(CultureInfo.InvariantCulture), true);
-            };
-
-            CDHeightSlider.OnValueChanged += _ =>
-            {
-                if (Profile is null)
-                    return;
-                var prototype = _prototypeManager.Index<SpeciesPrototype>(Profile.Species);
-                var newHeight = MathF.Round(MathHelper.Lerp(prototype.MinHeight, prototype.MaxHeight, CDHeightSlider.Value), 2);
-                CDHeight.Text = newHeight.ToString(CultureInfo.InvariantCulture);
-                SetProfileHeight(newHeight);
-            };
-
-            #endregion CDHeight
-            // End CD - Character Records
 
             #region Skin
 
@@ -817,7 +778,6 @@ namespace Content.Client.Lobby.UI
             UpdateCMarkingsFacialHair();
 
             // Begin CD - Character Records
-            UpdateHeightControls();
             _recordsTab.Update(profile);
             // End CD - Character Records
 
@@ -1310,15 +1270,6 @@ namespace Content.Client.Lobby.UI
             _entManager.System<MetaDataSystem>().SetEntityName(PreviewDummy, newName);
         }
 
-        // Begin CD - Character Records
-        private void SetProfileHeight(float height)
-        {
-            Profile = Profile?.WithHeight(height);
-            SetDirty();
-            ReloadProfilePreview();
-        }
-        // End CD - Character Records
-
         private void SetSpawnPriority(SpawnPriorityPreference newSpawnPriority)
         {
             Profile = Profile?.WithSpawnPriorityPreference(newSpawnPriority);
@@ -1503,26 +1454,6 @@ namespace Content.Client.Lobby.UI
 
             PronounsButton.SelectId((int) Profile.Gender);
         }
-
-        // Begin CD - Character Records
-        private void UpdateHeightControls()
-        {
-            if (Profile == null)
-            {
-                return;
-            }
-
-            var species = _species.Find(x => x.ID == Profile.Species);
-            if (species != null)
-                _defaultHeight = species.DefaultHeight;
-
-            var prototype = _prototypeManager.Index<SpeciesPrototype>(Profile.Species);
-            var sliderPercent = (Profile.Height - prototype.MinHeight) /
-                                (prototype.MaxHeight - prototype.MinHeight);
-            CDHeightSlider.Value = sliderPercent;
-            CDHeight.Text = Profile.Height.ToString(CultureInfo.InvariantCulture);
-        }
-        // End CD - Character Records
 
         private void UpdateSpawnPriorityControls()
         {

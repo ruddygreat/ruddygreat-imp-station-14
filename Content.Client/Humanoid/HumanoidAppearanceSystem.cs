@@ -5,8 +5,6 @@ using Content.Shared.Humanoid.Prototypes;
 using Content.Shared.Inventory;
 using Content.Shared.Preferences;
 using Robust.Client.GameObjects;
-using System.Numerics; // CD - Character Records
-using Robust.Client.Console; // CD - Character Records
 using Robust.Shared.Configuration;
 using Robust.Shared.Prototypes;
 using Robust.Shared.Utility;
@@ -214,7 +212,6 @@ public sealed class HumanoidAppearanceSystem : SharedHumanoidAppearanceSystem
         humanoid.Species = profile.Species;
         humanoid.SkinColor = profile.Appearance.SkinColor;
         humanoid.EyeColor = profile.Appearance.EyeColor;
-        humanoid.Height = profile.Height; // CD - Character Records
 
         UpdateSprite(humanoid, Comp<SpriteComponent>(uid));
     }
