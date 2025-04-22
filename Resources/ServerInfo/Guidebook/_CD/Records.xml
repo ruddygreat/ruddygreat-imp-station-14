@@ -25,7 +25,7 @@ had in the past or while working with Nanotrasen. Minor incidents should
 generally be avoided.
 
 ## Accessing Records
-You can access the records of your crewmates in game from their respective consoles.
+You can access the records of your crewmates in-game from their respective consoles.
 
 <Box>
 <GuideEntityEmbed Entity="ComputerMedicalRecords" Caption="Medical"/>
@@ -34,6 +34,7 @@ You can access the records of your crewmates in game from their respective conso
 </Box>
 
 Records can only be written in the character customization menu and not during
-a round.
+a round. It is not required that you make any records; interact with this
+feature as much or as little as you want!
 
 </Document>

@@ -25,4 +25,7 @@ cd-records-entry-view-popup-title = View Entry
 cd-character-records-entry-view-title = Title:
 cd-character-records-entry-view-involved = Author(s):
 
-cd-character-records-viewer-setwanted-placeholder = Reason
+cd-character-records-viewer-setwanted-placeholder = Enter a reason...
+
+cd-imp-records-viewer-flavor-left = Nanotrasen employee database. Keep records confidential!
+cd-imp-records-viewer-flavor-right = v3.3

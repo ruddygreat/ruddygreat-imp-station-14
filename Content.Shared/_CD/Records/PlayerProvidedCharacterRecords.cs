@@ -32,6 +32,10 @@ public sealed partial class PlayerProvidedCharacterRecords
 
     // Employment
     [DataField]
+    public int Year { get; private set; }
+    public const int MaxYear = 150;
+
+    [DataField]
     public bool HasWorkAuthorization { get; private set; }
 
     // Security
@@ -96,6 +100,7 @@ public sealed partial class PlayerProvidedCharacterRecords
     public PlayerProvidedCharacterRecords(
         bool hasWorkAuthorization,
         int height, int weight,
+        int year,
         string emergencyContactName,
         string identifyingFeatures,
         string allergies, string drugAllergies,
@@ -105,6 +110,7 @@ public sealed partial class PlayerProvidedCharacterRecords
         HasWorkAuthorization = hasWorkAuthorization;
         Height = height;
         Weight = weight;
+        Year = year;
         EmergencyContactName = emergencyContactName;
         IdentifyingFeatures = identifyingFeatures;
         Allergies = allergies;
@@ -119,6 +125,7 @@ public sealed partial class PlayerProvidedCharacterRecords
     {
         Height = other.Height;
         Weight = other.Weight;
+        Year = other.Year;
         EmergencyContactName = other.EmergencyContactName;
         HasWorkAuthorization = other.HasWorkAuthorization;
         IdentifyingFeatures = other.IdentifyingFeatures;
@@ -137,6 +144,7 @@ public sealed partial class PlayerProvidedCharacterRecords
             height: 170, weight: 70,
             emergencyContactName: "",
             identifyingFeatures: "",
+            year: 0,
             allergies: "None",
             drugAllergies: "None",
             postmortemInstructions: "Return home",
@@ -151,6 +159,7 @@ public sealed partial class PlayerProvidedCharacterRecords
         // This is ugly but is only used for integration tests.
         var test = Height == other.Height
                    && Weight == other.Weight
+                   && Year == other.Year
                    && EmergencyContactName == other.EmergencyContactName
                    && HasWorkAuthorization == other.HasWorkAuthorization
                    && IdentifyingFeatures == other.IdentifyingFeatures
@@ -205,6 +214,7 @@ public sealed partial class PlayerProvidedCharacterRecords
     {
         Height = Math.Clamp(Height, 0, MaxHeight);
         Weight = Math.Clamp(Weight, 0, MaxWeight);
+        Year = Math.Clamp(Year, 0, MaxYear);
         EmergencyContactName =
             ClampString(EmergencyContactName, TextMedLen);
         IdentifyingFeatures = ClampString(IdentifyingFeatures, TextMedLen);
@@ -223,6 +233,10 @@ public sealed partial class PlayerProvidedCharacterRecords
     public PlayerProvidedCharacterRecords WithWeight(int weight)
     {
         return new(this) { Weight = weight };
+    }
+    public PlayerProvidedCharacterRecords WithYear(int year)
+    {
+        return new(this) { Year = year };
     }
     public PlayerProvidedCharacterRecords WithWorkAuth(bool auth)
     {

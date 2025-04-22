@@ -26,6 +26,11 @@
                  </BoxContainer>
                  <Control MinSize="0 20"/>
                  <!-- Employment stuff -->
+                 <BoxContainer HorizontalExpand="True" SeparationOverride="2">
+                     <Label Text="{Loc 'humanoid-profile-editor-cd-imp-records-years-at-NT'}" />
+                     <Control HorizontalExpand="True" MinSize="5 0" />
+                     <LineEdit Name="YearEdit" HorizontalAlignment="Right" MinSize="60 0" />
+                 </BoxContainer>
                  <BoxContainer HorizontalExpand="True">
                      <Label Text="{Loc 'humanoid-profile-editor-cd-records-work-authorization'}" />
                      <Control HorizontalExpand="True" MinSize="5 0" />

@@ -55,6 +55,13 @@ public sealed partial class RecordEditorGui : Control
             UpdateRecords(_records.WithWorkAuth(args.Pressed));
         };
 
+        YearEdit.OnTextChanged += args =>
+        {
+            if (!int.TryParse(args.Text, out var newYear))
+                return;
+            UpdateRecords(_records.WithYear(newYear));
+        };
+
         #endregion
 
         #region Security
@@ -135,6 +142,7 @@ public sealed partial class RecordEditorGui : Control
         ContactNameEdit.SetText(_records.EmergencyContactName);
 
         WorkAuthCheckBox.Pressed = _records.HasWorkAuthorization;
+        YearEdit.SetText(_records.Year.ToString());
 
         IdentifyingFeaturesEdit.SetText(_records.IdentifyingFeatures);
 

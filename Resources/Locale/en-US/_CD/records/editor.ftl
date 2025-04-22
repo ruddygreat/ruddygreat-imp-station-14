@@ -11,6 +11,7 @@ humanoid-profile-editor-cd-records-contact-name = Emergency Contact(s):
 # Employment
 humanoid-profile-editor-cd-records-employment = General/Employment
 humanoid-profile-editor-cd-records-work-authorization = Work Authorization:
+humanoid-profile-editor-cd-imp-records-years-at-NT = Time at NT (years):
 
 # Security
 humanoid-profile-editor-cd-records-identifying-features = Identifying Features:
