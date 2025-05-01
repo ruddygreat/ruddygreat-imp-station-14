@@ -12,7 +12,7 @@ public sealed partial class UnrevivableComponent : Component
     /// A field to define if we should display the "Genetic incompatibility" warning on health analysers
     /// </summary>
     [DataField, AutoNetworkedField]
-    public bool Analyzable = true;
+    public bool Analyzable; //imp edit - change the default to false to make medical waste their topicals like god intended
 
     /// <summary>
     /// Can this player be cloned using a cloning pod?
