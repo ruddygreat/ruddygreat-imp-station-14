@@ -579,6 +579,7 @@
   - type: StartingMindRole
     mindRole: "MindRoleSiliconBrain"
     silent: true
+  - type: SkipLoadingCharacterRecords #imp edit - make it so the AI doesn't show up in the character records list
 
 # Hologram projection that the AI's eye tracks.
 - type: entity
