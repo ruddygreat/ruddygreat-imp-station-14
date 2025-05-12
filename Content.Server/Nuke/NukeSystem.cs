@@ -194,7 +194,7 @@ public sealed class NukeSystem : EntitySystem
             var worldPos = _transform.GetWorldPosition(xform);
 
             //imp edit start - make the nuke check for some number of nearby space tiles instead of failing on the first once
-            var total = 1f;
+            var total = 1f; //start at 1 to avoid a division by 0. it'll never actually happen but this pleases rider
             var space = 0f;
             foreach (var tile in _map.GetTilesIntersecting(xform.GridUid.Value, grid, new Circle(worldPos, component.RequiredFloorRadius), false))
             {
