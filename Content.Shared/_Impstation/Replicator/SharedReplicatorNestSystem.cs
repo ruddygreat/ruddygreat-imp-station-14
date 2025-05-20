@@ -21,7 +21,6 @@ using Robust.Shared.Audio.Systems;
 using Robust.Shared.Network;
 using Robust.Shared.Timing;
 using Content.Shared.Throwing;
-using Content.Shared.Climbing.Events;
 using Robust.Shared.Prototypes;
 
 namespace Content.Shared._Impstation.Replicator;
