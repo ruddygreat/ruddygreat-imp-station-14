@@ -21,12 +21,15 @@ using Robust.Shared.Audio.Systems;
 using Robust.Shared.Network;
 using Robust.Shared.Timing;
 using Content.Shared.Throwing;
+using Content.Shared.Climbing.Events;
+using Robust.Shared.Prototypes;
 
 namespace Content.Shared._Impstation.Replicator;
 
 public abstract class SharedReplicatorNestSystem : EntitySystem
 {
     [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private readonly IPrototypeManager _protoMan = default!;
     [Dependency] private readonly INetManager _net = default!;
 
     [Dependency] private readonly EntityWhitelistSystem _whitelist = default!;
@@ -49,8 +52,7 @@ public abstract class SharedReplicatorNestSystem : EntitySystem
 
         SubscribeLocalEvent<ReplicatorNestComponent, StepTriggeredOffEvent>(OnStepTriggered);
 
-        SubscribeLocalEvent<ReplicatorComponent, ReplicatorUpgrade2ActionEvent>(OnUpgrade2);
-        SubscribeLocalEvent<ReplicatorComponent, ReplicatorUpgrade3ActionEvent>(OnUpgrade3);
+        SubscribeLocalEvent<ReplicatorComponent, ReplicatorUpgradeActionEvent>(OnUpgrade);
     }
 
     public override void Update(float frameTime)
@@ -195,10 +197,6 @@ public abstract class SharedReplicatorNestSystem : EntitySystem
             if (ent.Comp.CurrentLevel <= ent.Comp.EndgameLevel)
                 ent.Comp.NeedsUpdate = true;
 
-            // if we've reached the endgame, the nest will ignore gravity when picking targets - actively pulling them in.
-            if (ent.Comp.CurrentLevel == ent.Comp.EndgameLevel)
-                _stepTrigger.SetIgnoreWeightless(ent, true);
-
             // update the threshold for the next upgrade (the default times the current level), and upgrade all our guys.
             // threshold increases plateau at the endgame level.
             ent.Comp.NextUpgradeAt += ent.Comp.CurrentLevel >= ent.Comp.EndgameLevel ? ent.Comp.UpgradeAt * ent.Comp.EndgameLevel : ent.Comp.UpgradeAt * ent.Comp.CurrentLevel;
@@ -262,61 +260,75 @@ public abstract class SharedReplicatorNestSystem : EntitySystem
 
             comp.TargetUpgradeStage++;
 
-            var targetAction = comp.TargetUpgradeStage == 1 ? comp.Level2Action : comp.Level3Action;
+            HashSet<EntProtoId> targetActions = [];
 
-            if (!mindContainer.HasMind)
-                comp.Actions.Add(_actions.AddAction(replicator, targetAction));
-            else if (mindContainer.Mind != null)
-                comp.Actions.Add(_actionContainer.AddAction((EntityUid)mindContainer.Mind, targetAction));
+            switch (comp.TargetUpgradeStage)
+            {
+                case 1:
+                    targetActions.Add(comp.Level2Action);
+                    if (comp.Level2AltAction != null)
+                    {
+                        targetActions.Add(comp.Level2AltAction.Value);
+                    }
+                    break;
+                case 2:
+                    targetActions.Add(comp.Level3Action);
+                    break;
+            }
+
+            foreach (var action in targetActions)
+            {
+                if (!mindContainer.HasMind)
+                    comp.Actions.Add(_actions.AddAction(replicator, action));
+                else if (mindContainer.Mind != null)
+                    comp.Actions.Add(_actionContainer.AddAction((EntityUid)mindContainer.Mind, action));
+            }
         }
     }
 
-    public void OnUpgrade2(Entity<ReplicatorComponent> ent, ref ReplicatorUpgrade2ActionEvent args)
+    public void OnUpgrade(Entity<ReplicatorComponent> ent, ref ReplicatorUpgradeActionEvent args)
     {
         // don't run this clientside
         if (_net.IsClient || !_timing.IsFirstTimePredicted)
             return;
 
-        if (ent.Comp.MyNest == null)
+        if (ent.Comp.MyNest == null || UpgradeReplicator(ent, args.TargetLevel) == null)
         {
             _popup.PopupEntity(Loc.GetString("replicator-cant-find-nest"), ent, PopupType.MediumCaution);
             return;
         }
 
-        UpgradeReplicator(ent, 2);
-
         QueueDel(ent);
-        QueueDel(args.Action);
+        foreach (var action in ent.Comp.Actions)
+            QueueDel(action);
 
         _popup.PopupEntity(Loc.GetString("replicator-upgrade-t2-others"), ent, PopupType.MediumCaution);
     }
 
-    public void OnUpgrade3(Entity<ReplicatorComponent> ent, ref ReplicatorUpgrade3ActionEvent args)
+    public EntityUid? UpgradeReplicator(Entity<ReplicatorComponent> ent, int desiredLevel)
     {
-        // don't run this clientside
-        if (_net.IsClient || !_timing.IsFirstTimePredicted)
-            return;
+        if (!_mind.TryGetMind(ent, out var mind, out _))
+            return null;
 
-        if (ent.Comp.MyNest == null)
-        {
-            _popup.PopupEntity(Loc.GetString("replicator-cant-find-nest"), ent, PopupType.MediumCaution);
-            return;
-        }
-
-        UpgradeReplicator(ent, 3);
-
-        QueueDel(ent);
-        QueueDel(args.Action);
-
-        _popup.PopupEntity(Loc.GetString("replicator-upgrade-t3-others"), ent, PopupType.MediumCaution);
-    }
-
-    public void UpgradeReplicator(Entity<ReplicatorComponent> ent, int desiredLevel)
-    {
         var xform = Transform(ent);
 
         // if adding more stages, maybe make this a switch.
-        var nextStage = desiredLevel == 2 ? ent.Comp.Level2Id : ent.Comp.Level3Id;
+        EntProtoId nextStage;
+
+        switch (desiredLevel)
+        {
+            case 2: // level 2
+                nextStage = ent.Comp.Level2Id;
+                break;
+            case 3: // level 3
+                nextStage = ent.Comp.Level3Id;
+                break;
+            case 4: // alternative level 2
+                nextStage = ent.Comp.Level2AltId;
+                break;
+            default:
+                return null;
+        }
 
         var upgraded = Spawn(nextStage, xform.Coordinates);
         var upgradedComp = EnsureComp<ReplicatorComponent>(upgraded);
@@ -331,15 +343,12 @@ public abstract class SharedReplicatorNestSystem : EntitySystem
             nestComp.SpawnedMinions.Add(upgraded);
         }
 
-        if (!_mind.TryGetMind(ent, out var mind, out _))
-            return;
-
         _mind.TransferTo(mind, upgraded);
 
         var messageSelf = desiredLevel == 2 ? "replicator-upgrade-t2-self" : "replicator-upgrade-t3-self";
         _popup.PopupEntity(Loc.GetString(messageSelf), ent, PopupType.Medium);
 
-        return;
+        return upgraded;
     }
 
     private void Embiggen(Entity<ReplicatorNestComponent> ent)
@@ -354,14 +363,10 @@ public sealed partial class ReplicatorSpawnNestActionEvent : InstantActionEvent
 
 }
 
-public sealed partial class ReplicatorUpgrade2ActionEvent : InstantActionEvent
+public sealed partial class ReplicatorUpgradeActionEvent : InstantActionEvent
 {
-
-}
-
-public sealed partial class ReplicatorUpgrade3ActionEvent : InstantActionEvent
-{
-
+    [DataField(required: true)]
+    public int TargetLevel;
 }
 
 [ByRefEvent]
