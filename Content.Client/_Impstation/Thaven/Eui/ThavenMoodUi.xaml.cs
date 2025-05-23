@@ -67,10 +67,8 @@ public sealed partial class ThavenMoodUi : FancyWindow
 
     public void SetFollowShared(bool value)
     {
-        if (value == _shouldFollowShared)
-            return;
-
         _shouldFollowShared = value;
+        ToggleSharedMoodButton.Pressed = value;
     }
 
     private void MoveUp(int index)
