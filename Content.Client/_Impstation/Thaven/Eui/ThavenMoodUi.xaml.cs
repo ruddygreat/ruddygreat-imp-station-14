@@ -12,12 +12,18 @@ public sealed partial class ThavenMoodUi : FancyWindow
     public event Action? OnSave;
 
     private List<ThavenMood> _moods = new();
+    private bool _shouldFollowShared = false;
 
     public ThavenMoodUi()
     {
         RobustXamlLoader.Load(this);
         NewMoodButton.OnPressed += _ => AddNewMood();
         SaveButton.OnPressed += _ => OnSave?.Invoke();
+
+        ToggleSharedMoodButton.OnToggled += _ =>
+        {
+            _shouldFollowShared = !_shouldFollowShared;
+        };
     }
 
     private void AddNewMood()
@@ -52,6 +58,19 @@ public sealed partial class ThavenMoodUi : FancyWindow
         }
 
         return newMoods;
+    }
+
+    public bool ShouldFollowShared()
+    {
+        return _shouldFollowShared;
+    }
+
+    public void SetFollowShared(bool value)
+    {
+        if (value == _shouldFollowShared)
+            return;
+
+        _shouldFollowShared = value;
     }
 
     private void MoveUp(int index)
