@@ -88,6 +88,7 @@ public sealed partial class ServerRadarBlipSystem : EntitySystem
 
         while (blipQuery.MoveNext(out var blipUid, out var blip, out var blipXform))
         {
+            //imp edit - ignore items that are souper sneaky
             if (HasComp<RadarBlipStealthComponent>(blipUid))
                 continue;
 

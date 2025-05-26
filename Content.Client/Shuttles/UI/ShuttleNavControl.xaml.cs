@@ -50,9 +50,10 @@ public sealed partial class ShuttleNavControl : BaseShuttleControl
 
     private List<Entity<MapGridComponent>> _grids = new();
 
-    //imp / frontier - timer for blip requests. 3.5s so blips timeout for a sec before they get re-requested.
+    //imp / frontier - timer for blip requests.
     private float _blipRequestAccumulator = 0;
     private float _blipRequestTime = 1.5f;
+    private bool _shouldShowSelf = true;
 
     public ShuttleNavControl() : base(64f, 256f, 256f)
     {
@@ -290,7 +291,7 @@ public sealed partial class ShuttleNavControl : BaseShuttleControl
         // player determine where they are relative to the shuttle.
         if (_consoleEntity != null && xformQuery.TryGetComponent(_consoleEntity, out var consoleXform))
         {
-            if (consoleXform.ParentUid != _coordinates.Value.EntityId)
+            if ((consoleXform.ParentUid != _coordinates.Value.EntityId) && _shouldShowSelf) //imp edit - added showSelf check
             {
                 var consolePositionWorld = _transform.GetWorldPosition((EntityUid)_consoleEntity);
                 var p = Vector2.Transform(consolePositionWorld, worldToShuttle * shuttleToView);
@@ -301,20 +302,6 @@ public sealed partial class ShuttleNavControl : BaseShuttleControl
         //frontier - draw radar blips
         DrawBlips(handle, worldToShuttle, shuttleToView);
 
-    }
-
-    //frontier - update the radar blips
-    protected override void FrameUpdate(FrameEventArgs args)
-    {
-        _blipRequestAccumulator += args.DeltaSeconds;
-
-        if (!(_blipRequestAccumulator > _blipRequestTime))
-            return;
-
-        _blipRequestAccumulator = 0;
-
-        if (_consoleEntity is {} consoleEntity)
-            _blipSystem.RequestBlips(consoleEntity);
     }
 
     private void DrawDocks(DrawingHandleScreen handle, EntityUid uid, Matrix3x2 gridToView)
@@ -360,5 +347,25 @@ public sealed partial class ShuttleNavControl : BaseShuttleControl
     private Vector2 InverseScalePosition(Vector2 value)
     {
         return (value - MidPointVector) / MinimapScale;
+    }
+
+    //frontier / imp edit - update the radar blips
+    protected override void FrameUpdate(FrameEventArgs args)
+    {
+        _blipRequestAccumulator += args.DeltaSeconds;
+
+        if (_blipRequestTime > _blipRequestAccumulator)
+            return;
+
+        _blipRequestAccumulator = 0;
+
+        if (_consoleEntity != null)
+            _blipSystem.RequestBlips(_consoleEntity.Value);
+    }
+
+    //frontier / imp edit - make this not show itself as a cyan blip on the map. used for handhels mass scanners
+    public void SetShowSelf(bool value)
+    {
+        _shouldShowSelf = value;
     }
 }

@@ -16,14 +16,20 @@ public sealed partial class RadarConsoleWindow : FancyWindow,
         RobustXamlLoader.Load(this);
     }
 
+    public void UpdateState(NavInterfaceState scc)
+    {
+        RadarScreen.UpdateState(scc);
+    }
+
     //frontier - set the console this is being accessed from
     public void SetConsole(EntityUid consoleEntity)
     {
         RadarScreen.SetConsole(consoleEntity);
     }
 
-    public void UpdateState(NavInterfaceState scc)
+    //imp / frontier - hide the little cyan blip
+    public void SetShowSelf(bool value)
     {
-        RadarScreen.UpdateState(scc);
+        RadarScreen.SetShowSelf(value);
     }
 }
