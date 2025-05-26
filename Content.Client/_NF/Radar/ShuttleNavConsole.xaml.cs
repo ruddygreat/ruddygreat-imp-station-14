@@ -16,7 +16,6 @@ public sealed partial class ShuttleNavControl
         var blipViewBounds = new Box2(-3f, -3f, Size.X + 3f, Size.Y + 3f);
 
         // Draw blips using the same grid-relative transformation approach as docks
-        //todo need to remove the blip on top of the player
         foreach (var blip in rawBlips)
         {
             var blipPosInView = Vector2.Transform(blip.Position, worldToShuttle * shuttleToView);

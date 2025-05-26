@@ -6,5 +6,5 @@ namespace Content.Server._NF.Radar;
 [RegisterComponent]
 public sealed partial class RadarBlipStealthComponent : Component
 {
-//todo implement this
+
 }
