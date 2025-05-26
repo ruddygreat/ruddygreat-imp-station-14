@@ -89,16 +89,10 @@ public sealed partial class ServerRadarBlipSystem : EntitySystem
         while (blipQuery.MoveNext(out var blipUid, out var blip, out var blipXform))
         {
             if (HasComp<RadarBlipStealthComponent>(blipUid))
-            {
-                //Log.Debug($"Blip {blipUid} skipped: stealth mode.");
                 continue;
-            }
 
             if (blipXform.MapID != radarMapId)
-            {
-                //Log.Debug($"Blip {blipUid} skipped: different map.");
                 continue;
-            }
 
             //imp edit - hide blips on grids, you have the crew monitor for that
             var blipGrid = blipXform.GridUid;
@@ -108,10 +102,7 @@ public sealed partial class ServerRadarBlipSystem : EntitySystem
             var blipPosition = _xform.GetWorldPosition(blipUid);
             var distance = (blipPosition - radarPosition).Length();
             if (distance > radarRange)
-            {
-                //Log.Debug($"Blip {blipUid} skipped: out of range.");
                 continue;
-            }
 
             blips.Add((blipPosition, blip.Scale, blip.RadarColor, blip.Shape));
         }
