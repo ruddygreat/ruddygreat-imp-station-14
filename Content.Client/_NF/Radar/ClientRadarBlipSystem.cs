@@ -10,6 +10,7 @@ namespace Content.Client._NF.Radar;
 /// </summary>
 /// <remarks>
 /// Ported from Monolith's RadarBlipsSystem.
+/// Imp notes - Removed all functionality surrounding blips on grids. you've got the crew monitor for that.
 /// </remarks>
 public sealed partial class ClientRadarBlipSystem : EntitySystem
 {
