@@ -74,10 +74,10 @@ public sealed class WearerGetsExamineTextSystem : EntitySystem
         if (entity.Comp.Wearer is not { } wearer)
             return;
 
-        if (TryComp(wearer, out ExtraExamineTextComponent? obviousExamine))
+        if (TryComp<ExtraExamineTextComponent>(wearer, out var obviousExamine))
         {
             obviousExamine.Lines.Remove(entity.Owner);
-            Dirty(entity.Owner, obviousExamine);
+            Dirty(wearer, obviousExamine);
         }
 
         entity.Comp.Wearer = null;
