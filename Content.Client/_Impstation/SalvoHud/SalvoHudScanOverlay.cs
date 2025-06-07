@@ -20,7 +20,7 @@ public sealed class SalvoHudScanOverlay : Overlay
     {
         IoCManager.InjectDependencies(this);
 
-        _shader = _prototypeManager.Index<ShaderPrototype>("SalvoScan").InstanceUnique();
+        _shader = _prototypeManager.Index<ShaderPrototype>("SalvoScan").Instance();
     }
 
     public override OverlaySpace Space => OverlaySpace.WorldSpaceBelowEntities;
@@ -35,11 +35,8 @@ public sealed class SalvoHudScanOverlay : Overlay
         var bl = new Vector2(ScanPoint.Value.X - Radius, ScanPoint.Value.Y - Radius);
         var tr = new Vector2(ScanPoint.Value.X + Radius, ScanPoint.Value.Y + Radius);
 
-        _shader.SetParameter("FADE_IN_DIST", 0.1f);
-        _shader.SetParameter("ALPHA", Alpha);
-
         worldHandle.UseShader(_shader);
-        worldHandle.DrawRect(new Box2(bl, tr), Color.White);
+        worldHandle.DrawRect(new Box2(bl, tr), Color.White.WithAlpha(Alpha));
         worldHandle.UseShader(null);
     }
 }

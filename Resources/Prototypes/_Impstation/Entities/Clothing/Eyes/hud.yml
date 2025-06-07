@@ -20,7 +20,7 @@
     sound: !type:SoundPathSpecifier
       path: /Audio/Machines/sonar-ping.ogg
       params:
-        volume: -3
+        volume: -6
 
 - type: entity
   parent: [ClothingEyesBase, BaseLensSlot, ShowSalvageIcons]

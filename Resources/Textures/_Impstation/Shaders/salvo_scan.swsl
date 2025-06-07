@@ -1,21 +1,20 @@
 light_mode unshaded;
 
-uniform highp float FADE_IN_DIST;
-uniform highp float ALPHA;
+const highp float FADE_IN_DIST = 0.1;
 
-const highp vec4 brightCol = vec4(0.2, 0.5, 0.75, 0.75);
+const highp vec4 brightCol = vec4(0.326, 0.819, 0.894, 0.75);
 
 void fragment() {
 
-    float dist = distance(UV, vec2(0.5));
-    float edge0 = 0.5 - FADE_IN_DIST;
-    float edge1 = 0.5;
-	float alpha = clamp((dist - edge0) / (edge1 - edge0), 0.0, 1.0);
+    highp float dist = distance(UV, vec2(0.5));
+    highp float edge0 = 0.5 - FADE_IN_DIST;
+    highp float edge1 = 0.5;
+	highp float alpha = clamp((dist - edge0) / (edge1 - edge0), 0.0, 1.0);
 
 	if (alpha >= 1.0) {
 	    alpha = 0.0;
 	}
 
     COLOR.rgb = brightCol.rgb;
-    COLOR.a = brightCol.a * (alpha * ALPHA);
+    COLOR.a = brightCol.a * (alpha);
 }

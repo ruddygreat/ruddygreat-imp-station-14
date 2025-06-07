@@ -146,6 +146,7 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
         if (dist > _iconsComp.CurrRadius || dist < _iconsComp.CurrMinRadius)
             return;
 
+        //sort material comp by value so things w/ more than 4 mats get the 4 highest prio mats shown
         foreach (var (id, _) in entity.Comp.MaterialComposition.OrderByDescending(x => x.Value))
         {
             if (_protoMan.TryIndex<MaterialCompositionIconPrototype>(id, out var proto))
