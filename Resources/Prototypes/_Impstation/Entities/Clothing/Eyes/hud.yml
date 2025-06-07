@@ -7,6 +7,18 @@
   - type: ShowStaticPriceIcon
 
 - type: entity
+  id: ActionActivateSalvoHud
+  name: Activate S.A.L.V.O hud
+  description: Activates the S.A.L.V.O hud, showing the composition of nearby items
+  components:
+  - type: InstantAction
+    icon:
+      sprite: Clothing/Eyes/Hud/med.rsi
+      state: icon
+    useDelay: 12.0
+    event: !type:ActivateSalvoHudEvent
+
+- type: entity
   parent: [ClothingEyesBase, BaseLensSlot, ShowSalvageIcons]
   id: ClothingEyesHudSalvage
   name: S.A.L.V.O hud

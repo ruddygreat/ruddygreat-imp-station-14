@@ -5,7 +5,7 @@ using Robust.Shared.Serialization.TypeSerializers.Implementations.Custom.Prototy
 namespace Content.Shared._Impstation.SalvoHud;
 
 /// <summary>
-/// This is a prototype for...
+/// This is a prototype for a static price icon. currently does nothing because I'm not pulling staticPrice into shared and not upstreaming it.
 /// </summary>
 [Prototype]
 public sealed partial class StaticPriceIconPrototype : StatusIconPrototype, IInheritingPrototype
