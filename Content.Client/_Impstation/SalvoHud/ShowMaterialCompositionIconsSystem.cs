@@ -1,11 +1,14 @@
+using System.Numerics;
 using Content.Client.Overlays;
 using Content.Shared._Impstation.SalvoHud;
-using Content.Shared.Actions;
+using Content.Shared.Clothing.Components;
+using Content.Shared.Inventory;
 using Content.Shared.Materials;
 using Content.Shared.StatusIcon.Components;
-using Robust.Client.GameObjects;
+using Robust.Client.Graphics;
 using Robust.Client.Player;
 using Robust.Shared.Prototypes;
+using Robust.Shared.Timing;
 
 namespace Content.Client._Impstation.SalvoHud;
 
@@ -19,43 +22,61 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
     //todo salvager rtb / sell / scrap marker?
 
     [Dependency] private readonly IPrototypeManager _protoMan = default!;
-    [Dependency] private readonly IPlayerManager _playerMan = default!;
+    [Dependency] private readonly IOverlayManager _overlayMan = default!;
     [Dependency] private readonly SharedTransformSystem _xform = default!;
+    [Dependency] private readonly IGameTiming _timing = default!;
+    [Dependency] private readonly InventorySystem _inventory = default!;
+    [Dependency] private readonly IPlayerManager _playerMan = default!;
 
-    //storing a bunch of state inside a system yaaaaay
-    //this sucks but I can't really do this any other way afaik
-    private SalvohudScanState _state = SalvohudScanState.Idle;
-    private float _currMinRange = 0;
-    private float _currMaxRange = 0;
+    private SalvoHudScanOverlay _overlay = default!;
+
+    //yaay storing state in a system
+    //makes things easier + means I'm not re-getting the salvohud ent for every status icon
+    ShowMaterialCompositionIconsComponent? iconsComp = null;
 
     public override void Initialize()
     {
         base.Initialize();
 
         SubscribeLocalEvent<PhysicalCompositionComponent, GetStatusIconsEvent>(OnGetStatusIconsEvent);
-        SubscribeLocalEvent<ShowMaterialCompositionIconsComponent, ActivateSalvoHudEvent>(OnActivateSalvoHudEvent);
+
+        if (_overlayMan.TryGetOverlay<SalvoHudScanOverlay>(out var overlay))
+        {
+            _overlay = overlay;
+        }
+        else
+        {
+            _overlay = new SalvoHudScanOverlay();
+            _overlayMan.AddOverlay(_overlay);
+        }
     }
 
     public override void FrameUpdate(float frameTime)
     {
         base.FrameUpdate(frameTime);
 
-        var query = EntityQueryEnumerator<ShowMaterialCompositionIconsComponent>();
+        //play the hits
+        if (!_timing.IsFirstTimePredicted)
+            return;
 
+        //update salvohuds
+        //don't really care if they're out of sync w/ the server because their stuff only ever gets shown clientside?
+        //can fix later if it's an issue
+        var query = EntityQueryEnumerator<ShowMaterialCompositionIconsComponent>();
         while (query.MoveNext(out var comp))
         {
             switch (comp.CurrState)
             {
-                default:
                 case SalvohudScanState.Idle:
                     comp.Accumulator = 0;
-                    _state = SalvohudScanState.Idle;
                     break;
 
                 case SalvohudScanState.In:
                     comp.Accumulator += frameTime;
-                    comp.CurrMaxRange = comp.MaxRange * (comp.Accumulator / comp.InPeriod);
-                    _state = SalvohudScanState.In;
+                    var inProgress = comp.Accumulator / comp.InPeriod;
+                    comp.CurrMaxRange = comp.MaxRange * (inProgress * inProgress);
+
+                    _overlay.ScanPoint ??= comp.LastPingPos;
 
                     if (!(comp.Accumulator > comp.InPeriod))
                         break;
@@ -67,8 +88,6 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
                 case SalvohudScanState.Active:
                     comp.Accumulator += frameTime;
                     comp.CurrMaxRange = comp.MaxRange;
-                    _state = SalvohudScanState.Active;
-
                     if (!(comp.Accumulator > comp.ActivePeriod))
                         break;
 
@@ -78,41 +97,51 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
 
                 case SalvohudScanState.Out:
                     comp.Accumulator += frameTime;
-                    comp.CurrMinRange = comp.MaxRange * (comp.Accumulator / comp.OutPeriod);
-                    _state = SalvohudScanState.Out;
-
+                    var outProgress = comp.Accumulator / comp.OutPeriod;
+                    comp.CurrMinRange = comp.MaxRange * (outProgress * outProgress);
                     if (!(comp.Accumulator > comp.OutPeriod))
                         break;
 
                     comp.CurrMaxRange = 0;
                     comp.CurrMinRange = 0;
                     comp.Accumulator = 0;
+                    comp.LastPingPos = null;
                     comp.CurrState = SalvohudScanState.Idle;
+                    _overlay.ScanPoint = null;
                     break;
             }
-
-            //this sucks bad
-            _state = comp.CurrState;
-            _currMinRange = comp.CurrMinRange;
-            _currMaxRange = comp.CurrMaxRange;
         }
-    }
 
-    private void OnActivateSalvoHudEvent(Entity<ShowMaterialCompositionIconsComponent> ent, ref ActivateSalvoHudEvent args)
-    {
-        ent.Comp.CurrState = SalvohudScanState.In;
+        //vaguely evil thing to get the salvohud the player is currently wearing
+        iconsComp = null;
+        if (_playerMan.LocalEntity is not {} player || !TryComp<InventoryComponent>(player, out var inventoryComp))
+            return;
+
+        var invEnumerator = new InventorySystem.InventorySlotEnumerator(inventoryComp, SlotFlags.EYES);
+        while (invEnumerator.MoveNext(out var inventorySlot))
+        {
+            if (inventorySlot.ContainedEntity != null && HasComp<ShowMaterialCompositionIconsComponent>(inventorySlot.ContainedEntity))
+                iconsComp = Comp<ShowMaterialCompositionIconsComponent>(inventorySlot.ContainedEntity.Value);
+        }
+
+        if (iconsComp == null)
+            return;
+
+        _overlay.MinRadius = iconsComp.CurrMinRange;
+        _overlay.MaxRadius = iconsComp.CurrMaxRange;
     }
 
     //todo this is really fucking broken for some reason
+    //ok it was because I was getting the wrong salvohud in the state stuff. it should get resolved correctly now
     private void OnGetStatusIconsEvent(Entity<PhysicalCompositionComponent> entity, ref GetStatusIconsEvent args)
     {
-        if (!IsActive || _state == SalvohudScanState.Idle || _playerMan.LocalEntity is not {} player)
+        if (!IsActive || iconsComp == null || iconsComp.CurrState == SalvohudScanState.Idle || iconsComp.LastPingPos == null)
             return;
 
-        var diff = _xform.GetWorldPosition(entity) - _xform.GetWorldPosition(player);
-        var dist = diff.Length();
+        var diff = _xform.GetWorldPosition(entity) - iconsComp.LastPingPos;
+        var dist = diff.Value.Length();
 
-        if (dist > _currMaxRange || dist < _currMinRange)
+        if (dist > iconsComp.CurrMaxRange || dist < iconsComp.CurrMinRange)
             return;
 
         foreach (var (id, _) in entity.Comp.MaterialComposition)

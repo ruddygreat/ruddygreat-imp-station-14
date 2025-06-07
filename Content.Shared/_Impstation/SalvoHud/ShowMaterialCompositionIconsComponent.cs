@@ -1,3 +1,4 @@
+using System.Numerics;
 using Robust.Shared.GameStates;
 using Robust.Shared.Prototypes;
 
@@ -15,6 +16,9 @@ public sealed partial class ShowMaterialCompositionIconsComponent : Component
     [DataField, AutoNetworkedField]
     public EntityUid? ActivateActionEnt;
 
+    [DataField]
+    public Vector2? LastPingPos = null;
+
     /// <summary>
     /// how long the current scan has been active for
     /// </summary>
@@ -31,19 +35,19 @@ public sealed partial class ShowMaterialCompositionIconsComponent : Component
     /// how long to stay in the "in" state
     /// </summary>
     [DataField]
-    public float InPeriod = 3;
+    public float InPeriod = 1;
 
     /// <summary>
     /// how long to stay in the "active" state
     /// </summary>
     [DataField]
-    public float ActivePeriod = 4;
+    public float ActivePeriod = 8;
 
     /// <summary>
     /// how long to stay in the "out" state
     /// </summary>
     [DataField]
-    public float OutPeriod = 3;
+    public float OutPeriod = 1;
 
     /// <summary>
     /// max range for the scan
