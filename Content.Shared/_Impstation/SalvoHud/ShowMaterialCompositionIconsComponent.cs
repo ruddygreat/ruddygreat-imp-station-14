@@ -53,7 +53,7 @@ public sealed partial class ShowMaterialCompositionIconsComponent : Component
     /// max range for the scan
     /// </summary>
     [DataField]
-    public float MaxRange = 10;
+    public float MaxRange = 7.5f;
 
     /// <summary>
     /// the current minimum range. set during out.

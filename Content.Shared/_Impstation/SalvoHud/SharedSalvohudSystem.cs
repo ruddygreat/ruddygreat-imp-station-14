@@ -1,5 +1,4 @@
 using Content.Shared.Actions;
-using Content.Shared.Inventory;
 using Robust.Shared.Timing;
 
 namespace Content.Shared._Impstation.SalvoHud;
@@ -7,7 +6,7 @@ namespace Content.Shared._Impstation.SalvoHud;
 /// <summary>
 /// This handles adding the toggle salvohud actions to the player when they wear it
 /// </summary>
-public sealed class SharedSalvohudToggleSystem : EntitySystem
+public sealed class SharedSalvohudSystem : EntitySystem
 {
     [Dependency] private readonly SharedActionsSystem _actions = default!;
     [Dependency] private readonly SharedTransformSystem _xform = default!;

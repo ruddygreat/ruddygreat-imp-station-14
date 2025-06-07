@@ -1,3 +1,4 @@
+using System.Linq;
 using System.Numerics;
 using Content.Client.Overlays;
 using Content.Shared._Impstation.SalvoHud;
@@ -68,7 +69,11 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
             switch (comp.CurrState)
             {
                 case SalvohudScanState.Idle:
+                    //constantly reset to a given state if idle
+                    comp.CurrMaxRange = 0;
+                    comp.CurrMinRange = 0;
                     comp.Accumulator = 0;
+                    comp.LastPingPos = null;
                     break;
 
                 case SalvohudScanState.In:
@@ -88,6 +93,7 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
                 case SalvohudScanState.Active:
                     comp.Accumulator += frameTime;
                     comp.CurrMaxRange = comp.MaxRange;
+
                     if (!(comp.Accumulator > comp.ActivePeriod))
                         break;
 
@@ -99,15 +105,11 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
                     comp.Accumulator += frameTime;
                     var outProgress = comp.Accumulator / comp.OutPeriod;
                     comp.CurrMinRange = comp.MaxRange * (outProgress * outProgress);
+
                     if (!(comp.Accumulator > comp.OutPeriod))
                         break;
 
-                    comp.CurrMaxRange = 0;
-                    comp.CurrMinRange = 0;
-                    comp.Accumulator = 0;
-                    comp.LastPingPos = null;
                     comp.CurrState = SalvohudScanState.Idle;
-                    _overlay.ScanPoint = null;
                     break;
             }
         }
@@ -125,14 +127,19 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
         }
 
         if (iconsComp == null)
-            return;
-
-        _overlay.MinRadius = iconsComp.CurrMinRange;
-        _overlay.MaxRadius = iconsComp.CurrMaxRange;
+        {
+            _overlay.MinRadius = 0;
+            _overlay.MaxRadius = 0;
+            _overlay.ScanPoint = null;
+        }
+        else
+        {
+            _overlay.MinRadius = iconsComp.CurrMinRange;
+            _overlay.MaxRadius = iconsComp.CurrMaxRange;
+            _overlay.ScanPoint = iconsComp.LastPingPos;
+        }
     }
 
-    //todo this is really fucking broken for some reason
-    //ok it was because I was getting the wrong salvohud in the state stuff. it should get resolved correctly now
     private void OnGetStatusIconsEvent(Entity<PhysicalCompositionComponent> entity, ref GetStatusIconsEvent args)
     {
         if (!IsActive || iconsComp == null || iconsComp.CurrState == SalvohudScanState.Idle || iconsComp.LastPingPos == null)
@@ -144,7 +151,7 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
         if (dist > iconsComp.CurrMaxRange || dist < iconsComp.CurrMinRange)
             return;
 
-        foreach (var (id, _) in entity.Comp.MaterialComposition)
+        foreach (var (id, _) in entity.Comp.MaterialComposition.OrderByDescending(x => x.Value))
         {
             if (_protoMan.TryIndex<MaterialCompositionIconPrototype>(id, out var proto))
                 args.StatusIcons.Add(proto);
