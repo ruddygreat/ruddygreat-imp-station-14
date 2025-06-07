@@ -38,34 +38,34 @@ public sealed partial class ShowMaterialCompositionIconsComponent : Component
     public float InPeriod = 1;
 
     /// <summary>
+    /// how long it takes for the ping to fade out at the end of the In state
+    /// </summary>
+    [DataField]
+    public float PingFadeoutTime = 0.1f;
+
+    /// <summary>
     /// how long to stay in the "active" state
     /// </summary>
     [DataField]
-    public float ActivePeriod = 8;
-
-    /// <summary>
-    /// how long to stay in the "out" state
-    /// </summary>
-    [DataField]
-    public float OutPeriod = 1;
+    public float ActivePeriod = 9;
 
     /// <summary>
     /// max range for the scan
     /// </summary>
     [DataField]
-    public float MaxRange = 7.5f;
+    public float MaxRadius = 7.5f;
 
     /// <summary>
     /// the current minimum range. set during out.
     /// </summary>
     [DataField]
-    public float CurrMinRange = 0;
+    public float CurrMinRadius = 0;
 
     /// <summary>
     /// the current max range. set during in.
     /// </summary>
     [DataField]
-    public float CurrMaxRange = 0;
+    public float CurrRadius = 0;
 }
 
 public enum SalvohudScanState
@@ -73,5 +73,4 @@ public enum SalvohudScanState
     Idle,
     In,
     Active,
-    Out
 }

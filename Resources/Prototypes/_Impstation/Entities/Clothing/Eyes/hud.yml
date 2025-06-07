@@ -15,11 +15,12 @@
     icon:
       sprite: Clothing/Eyes/Hud/med.rsi
       state: icon
-    useDelay: 12
+    useDelay: 10
     event: !type:ActivateSalvoHudEvent
     sound: !type:SoundPathSpecifier
       path: /Audio/Machines/sonar-ping.ogg
-      volume: 0.5
+      params:
+        volume: -3
 
 - type: entity
   parent: [ClothingEyesBase, BaseLensSlot, ShowSalvageIcons]

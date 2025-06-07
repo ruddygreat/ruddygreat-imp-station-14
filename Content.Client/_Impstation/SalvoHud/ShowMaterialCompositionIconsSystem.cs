@@ -1,8 +1,6 @@
 using System.Linq;
-using System.Numerics;
 using Content.Client.Overlays;
 using Content.Shared._Impstation.SalvoHud;
-using Content.Shared.Clothing.Components;
 using Content.Shared.Inventory;
 using Content.Shared.Materials;
 using Content.Shared.StatusIcon.Components;
@@ -20,20 +18,19 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
 {
 
     //todo fixedPrice showing as well
-    //todo salvager rtb / sell / scrap marker?
+    //god I hate all of this code so much I have no idea why it was so painful to write
 
     [Dependency] private readonly IPrototypeManager _protoMan = default!;
     [Dependency] private readonly IOverlayManager _overlayMan = default!;
     [Dependency] private readonly SharedTransformSystem _xform = default!;
     [Dependency] private readonly IGameTiming _timing = default!;
-    [Dependency] private readonly InventorySystem _inventory = default!;
     [Dependency] private readonly IPlayerManager _playerMan = default!;
 
     private SalvoHudScanOverlay _overlay = default!;
 
     //yaay storing state in a system
     //makes things easier + means I'm not re-getting the salvohud ent for every status icon
-    ShowMaterialCompositionIconsComponent? iconsComp = null;
+    private ShowMaterialCompositionIconsComponent? _iconsComp;
 
     public override void Initialize()
     {
@@ -70,8 +67,8 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
             {
                 case SalvohudScanState.Idle:
                     //constantly reset to a given state if idle
-                    comp.CurrMaxRange = 0;
-                    comp.CurrMinRange = 0;
+                    comp.CurrRadius = 0;
+                    comp.CurrMinRadius = 0;
                     comp.Accumulator = 0;
                     comp.LastPingPos = null;
                     break;
@@ -79,9 +76,9 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
                 case SalvohudScanState.In:
                     comp.Accumulator += frameTime;
                     var inProgress = comp.Accumulator / comp.InPeriod;
-                    comp.CurrMaxRange = comp.MaxRange * (inProgress * inProgress);
+                    comp.CurrRadius = comp.MaxRadius * (inProgress * inProgress);
 
-                    _overlay.ScanPoint ??= comp.LastPingPos;
+                    _overlay.ScanPoint ??= comp.LastPingPos; //todo don't like this
 
                     if (!(comp.Accumulator > comp.InPeriod))
                         break;
@@ -92,30 +89,19 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
 
                 case SalvohudScanState.Active:
                     comp.Accumulator += frameTime;
-                    comp.CurrMaxRange = comp.MaxRange;
+                    comp.CurrRadius = comp.MaxRadius;
 
                     if (!(comp.Accumulator > comp.ActivePeriod))
                         break;
 
                     comp.Accumulator = 0;
-                    comp.CurrState = SalvohudScanState.Out;
-                    break;
-
-                case SalvohudScanState.Out:
-                    comp.Accumulator += frameTime;
-                    var outProgress = comp.Accumulator / comp.OutPeriod;
-                    comp.CurrMinRange = comp.MaxRange * (outProgress * outProgress);
-
-                    if (!(comp.Accumulator > comp.OutPeriod))
-                        break;
-
                     comp.CurrState = SalvohudScanState.Idle;
                     break;
             }
         }
 
         //vaguely evil thing to get the salvohud the player is currently wearing
-        iconsComp = null;
+        _iconsComp = null;
         if (_playerMan.LocalEntity is not {} player || !TryComp<InventoryComponent>(player, out var inventoryComp))
             return;
 
@@ -123,32 +109,41 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
         while (invEnumerator.MoveNext(out var inventorySlot))
         {
             if (inventorySlot.ContainedEntity != null && HasComp<ShowMaterialCompositionIconsComponent>(inventorySlot.ContainedEntity))
-                iconsComp = Comp<ShowMaterialCompositionIconsComponent>(inventorySlot.ContainedEntity.Value);
+                _iconsComp = Comp<ShowMaterialCompositionIconsComponent>(inventorySlot.ContainedEntity.Value);
         }
 
-        if (iconsComp == null)
+        if (_iconsComp == null)
         {
-            _overlay.MinRadius = 0;
-            _overlay.MaxRadius = 0;
+            _overlay.Radius = 0f;
             _overlay.ScanPoint = null;
         }
         else
         {
-            _overlay.MinRadius = iconsComp.CurrMinRange;
-            _overlay.MaxRadius = iconsComp.CurrMaxRange;
-            _overlay.ScanPoint = iconsComp.LastPingPos;
+            if (_iconsComp.CurrState == SalvohudScanState.In) //this feels like it sucks but kinda doesn't? idk but I kinda hate all of this code.
+            {
+                var edge0 = _iconsComp.InPeriod - _iconsComp.PingFadeoutTime;
+                var edge1 = _iconsComp.InPeriod;
+                _overlay.Alpha = 1f - (float) Math.Clamp((_iconsComp.Accumulator - edge0) / (edge1 - edge0), 0.0, 1.0);
+            }
+            else
+            {
+                _overlay.Alpha = 0f;
+            }
+
+            _overlay.Radius = _iconsComp.CurrRadius;
+            _overlay.ScanPoint = _iconsComp.LastPingPos;
         }
     }
 
     private void OnGetStatusIconsEvent(Entity<PhysicalCompositionComponent> entity, ref GetStatusIconsEvent args)
     {
-        if (!IsActive || iconsComp == null || iconsComp.CurrState == SalvohudScanState.Idle || iconsComp.LastPingPos == null)
+        if (!IsActive || _iconsComp == null || _iconsComp.CurrState == SalvohudScanState.Idle || _iconsComp.LastPingPos == null)
             return;
 
-        var diff = _xform.GetWorldPosition(entity) - iconsComp.LastPingPos;
+        var diff = _xform.GetWorldPosition(entity) - _iconsComp.LastPingPos;
         var dist = diff.Value.Length();
 
-        if (dist > iconsComp.CurrMaxRange || dist < iconsComp.CurrMinRange)
+        if (dist > _iconsComp.CurrRadius || dist < _iconsComp.CurrMinRadius)
             return;
 
         foreach (var (id, _) in entity.Comp.MaterialComposition.OrderByDescending(x => x.Value))
