@@ -61,6 +61,9 @@ public sealed partial class ShowMaterialCompositionIconsComponent : Component
     [DataField]
     public float ActivePeriod = 9;
 
+    [DataField]
+    public float OutPeriod = 3;
+
     /// <summary>
     /// max range for the scan
     /// </summary>
@@ -85,4 +88,5 @@ public enum SalvohudScanState
     Idle,
     In,
     Active,
+    Out
 }

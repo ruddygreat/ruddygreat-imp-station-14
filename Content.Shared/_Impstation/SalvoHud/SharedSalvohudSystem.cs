@@ -23,7 +23,7 @@ public sealed class SharedSalvohudSystem : EntitySystem
     {
         ent.Comp.CurrState = SalvohudScanState.In;
         ent.Comp.LastPingPos = _xform.GetWorldPosition(ent);
-        _actions.SetUseDelay(ent.Comp.ActivateActionEnt, TimeSpan.FromSeconds(ent.Comp.InPeriod + ent.Comp.ActivePeriod)); //set the use delay such that the action can never be re-triggered while it's active
+        _actions.SetUseDelay(ent.Comp.ActivateActionEnt, TimeSpan.FromSeconds(ent.Comp.InPeriod + ent.Comp.ActivePeriod + ent.Comp.OutPeriod + 0.25f)); //set the use delay such that the action can never be re-triggered while it's active
         args.Handled = true;
     }
 

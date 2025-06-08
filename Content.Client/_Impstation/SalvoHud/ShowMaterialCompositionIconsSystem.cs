@@ -80,7 +80,7 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
                     var inProgress = comp.Accumulator / comp.InPeriod;
                     comp.CurrRadius = comp.MaxRadius * (inProgress * inProgress);
 
-                    if (!(comp.Accumulator > comp.InPeriod))
+                    if (comp.Accumulator < comp.InPeriod)
                         break;
 
                     comp.Accumulator = 0;
@@ -91,7 +91,19 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
                     comp.Accumulator += frameTime;
                     comp.CurrRadius = comp.MaxRadius;
 
-                    if (!(comp.Accumulator > comp.ActivePeriod))
+                    if (comp.Accumulator < comp.ActivePeriod)
+                        break;
+
+                    comp.Accumulator = 0;
+                    comp.CurrState = SalvohudScanState.Out;
+                    break;
+
+                case SalvohudScanState.Out:
+                    comp.Accumulator += frameTime;
+                    var outProgress = comp.Accumulator / comp.OutPeriod;
+                    comp.CurrMinRadius = comp.MaxRadius * (outProgress * outProgress);
+
+                    if (comp.Accumulator < comp.OutPeriod)
                         break;
 
                     comp.Accumulator = 0;
