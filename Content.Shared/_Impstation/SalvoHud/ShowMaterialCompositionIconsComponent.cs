@@ -5,23 +5,35 @@ using Robust.Shared.Prototypes;
 namespace Content.Shared._Impstation.SalvoHud;
 
 /// <summary>
-/// This is used for...
+/// This is used for a whole buncha bullshit that ultimately gives status icons to entities that display their PhysicalComposition data
 /// </summary>
 [RegisterComponent, NetworkedComponent, AutoGenerateComponentState]
 public sealed partial class ShowMaterialCompositionIconsComponent : Component
 {
+    /// <summary>
+    /// the action that makes this go boop
+    /// </summary>
     [DataField]
     public EntProtoId ActivateActionProtoID = "ActionActivateSalvoHud";
 
+    /// <summary>
+    /// I hate actions.
+    /// </summary>
     [DataField, AutoNetworkedField]
     public EntityUid? ActivateActionEnt;
 
+    /// <summary>
+    /// the position where we last pinged from, used to keep a consistent set of things revealed.
+    /// </summary>
     [DataField]
     public Vector2? LastPingPos = null;
 
     /// <summary>
     /// how long the current scan has been active for
     /// </summary>
+    /// <remarks>
+    /// Using an accumulator because I prefer them over timespans. should probably be a timespan though.
+    /// </remarks>
     [DataField]
     public float Accumulator = 0;
 

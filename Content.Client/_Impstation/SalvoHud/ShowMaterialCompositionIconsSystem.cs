@@ -12,12 +12,12 @@ using Robust.Shared.Timing;
 namespace Content.Client._Impstation.SalvoHud;
 
 /// <summary>
-/// This handles...
+/// This system adds status icons to entities with a PhysicalComposition component. It also does a whole host of other bullshit that I hate.
 /// </summary>
 public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<ShowMaterialCompositionIconsComponent>
 {
 
-    //todo fixedPrice showing as well
+    //todo fixedPrice showing as well... later
     //god I hate all of this code so much I have no idea why it was so painful to write
 
     [Dependency] private readonly IPrototypeManager _protoMan = default!;
@@ -28,7 +28,7 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
 
     private SalvoHudScanOverlay _overlay = default!;
 
-    //yaay storing state in a system
+    //yaaay storing state in a system
     //makes things easier + means I'm not re-getting the salvohud ent for every status icon
     private ShowMaterialCompositionIconsComponent? _iconsComp;
 
@@ -54,6 +54,8 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
         base.FrameUpdate(frameTime);
 
         //play the hits
+        //needs to be here because I'm using an accumulator instead of timestamps, probably.
+        //also actively doesn't need prediction because this is all clientside. checkmate woke moralists.
         if (!_timing.IsFirstTimePredicted)
             return;
 
@@ -66,7 +68,7 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
             switch (comp.CurrState)
             {
                 case SalvohudScanState.Idle:
-                    //constantly reset to a given state if idle
+                    //constantly reset to a known "empty" state if idle
                     comp.CurrRadius = 0;
                     comp.CurrMinRadius = 0;
                     comp.Accumulator = 0;
@@ -77,8 +79,6 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
                     comp.Accumulator += frameTime;
                     var inProgress = comp.Accumulator / comp.InPeriod;
                     comp.CurrRadius = comp.MaxRadius * (inProgress * inProgress);
-
-                    _overlay.ScanPoint ??= comp.LastPingPos; //todo don't like this
 
                     if (!(comp.Accumulator > comp.InPeriod))
                         break;
@@ -100,7 +100,7 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
             }
         }
 
-        //vaguely evil thing to get the salvohud the player is currently wearing
+        //vaguely evil thing to get the salvohud the player is currently wearing, if any
         _iconsComp = null;
         if (_playerMan.LocalEntity is not {} player || !TryComp<InventoryComponent>(player, out var inventoryComp))
             return;
@@ -108,6 +108,7 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
         var invEnumerator = new InventorySystem.InventorySlotEnumerator(inventoryComp, SlotFlags.EYES);
         while (invEnumerator.MoveNext(out var inventorySlot))
         {
+            //if the player somehow has multiple eye slots, only get the last salvohud
             if (inventorySlot.ContainedEntity != null && HasComp<ShowMaterialCompositionIconsComponent>(inventorySlot.ContainedEntity))
                 _iconsComp = Comp<ShowMaterialCompositionIconsComponent>(inventorySlot.ContainedEntity.Value);
         }
@@ -121,6 +122,8 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
         {
             if (_iconsComp.CurrState == SalvohudScanState.In) //this feels like it sucks but kinda doesn't? idk but I kinda hate all of this code.
             {
+                _overlay.ScanPoint ??= _iconsComp.LastPingPos;
+
                 var edge0 = _iconsComp.InPeriod - _iconsComp.PingFadeoutTime;
                 var edge1 = _iconsComp.InPeriod;
                 _overlay.Alpha = 1f - (float) Math.Clamp((_iconsComp.Accumulator - edge0) / (edge1 - edge0), 0.0, 1.0);

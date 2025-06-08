@@ -14,7 +14,7 @@ public sealed class SalvoHudScanOverlay : Overlay
     public float Radius = 0;
     public float Alpha = 1f;
 
-    private ShaderInstance _shader;
+    private readonly ShaderInstance _shader;
 
     public SalvoHudScanOverlay()
     {

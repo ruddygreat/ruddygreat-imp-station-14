@@ -10,7 +10,6 @@ public sealed class SharedSalvohudSystem : EntitySystem
 {
     [Dependency] private readonly SharedActionsSystem _actions = default!;
     [Dependency] private readonly SharedTransformSystem _xform = default!;
-    [Dependency] private readonly IGameTiming _timing = default!;
 
     /// <inheritdoc/>
     public override void Initialize()
@@ -22,11 +21,9 @@ public sealed class SharedSalvohudSystem : EntitySystem
 
     private void OnActivateSalvoHudEvent(Entity<ShowMaterialCompositionIconsComponent> ent, ref ActivateSalvoHudEvent args)
     {
-        if (!_timing.IsFirstTimePredicted)
-            return;
-
         ent.Comp.CurrState = SalvohudScanState.In;
         ent.Comp.LastPingPos = _xform.GetWorldPosition(ent);
+        _actions.SetUseDelay(ent.Comp.ActivateActionEnt, TimeSpan.FromSeconds(ent.Comp.InPeriod + ent.Comp.ActivePeriod)); //set the use delay such that the action can never be re-triggered while it's active
         args.Handled = true;
     }
 
@@ -37,6 +34,7 @@ public sealed class SharedSalvohudSystem : EntitySystem
 
     private void OnGetItemActions(Entity<ShowMaterialCompositionIconsComponent> ent, ref GetItemActionsEvent args)
     {
+        //can't look through the hud if you're holding it
         if (args.SlotFlags == null)
             return;
 

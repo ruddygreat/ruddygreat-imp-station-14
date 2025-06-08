@@ -1,7 +1,6 @@
 light_mode unshaded;
 
 const highp float FADE_IN_DIST = 0.1;
-
 const highp vec4 brightCol = vec4(0.326, 0.819, 0.894, 0.75);
 
 void fragment() {
