@@ -50,12 +50,6 @@ public sealed partial class ShowMaterialCompositionIconsComponent : Component
     public float InPeriod = 1;
 
     /// <summary>
-    /// how long it takes for the ping to fade out at the end of the In state
-    /// </summary>
-    [DataField]
-    public float PingFadeoutTime = 0.1f;
-
-    /// <summary>
     /// how long to stay in the "active" state
     /// </summary>
     [DataField]

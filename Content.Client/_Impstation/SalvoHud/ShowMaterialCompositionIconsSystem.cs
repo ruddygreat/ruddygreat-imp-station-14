@@ -78,7 +78,7 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
                 case SalvohudScanState.In:
                     comp.Accumulator += frameTime;
                     var inProgress = comp.Accumulator / comp.InPeriod;
-                    comp.CurrRadius = comp.MaxRadius * (inProgress * inProgress);
+                    comp.CurrRadius = comp.MaxRadius * inProgress;
 
                     if (comp.Accumulator < comp.InPeriod)
                         break;
@@ -101,7 +101,7 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
                 case SalvohudScanState.Out:
                     comp.Accumulator += frameTime;
                     var outProgress = comp.Accumulator / comp.OutPeriod;
-                    comp.CurrMinRadius = comp.MaxRadius * (outProgress * outProgress);
+                    comp.CurrMinRadius = comp.MaxRadius * outProgress;
 
                     if (comp.Accumulator < comp.OutPeriod)
                         break;
@@ -136,10 +136,7 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
             if (_iconsComp.CurrState == SalvohudScanState.In) //this feels like it sucks but kinda doesn't? idk but I kinda hate all of this code.
             {
                 _overlay.ScanPoint ??= _iconsComp.LastPingPos;
-
-                var edge0 = _iconsComp.InPeriod - _iconsComp.PingFadeoutTime;
-                var edge1 = _iconsComp.InPeriod;
-                _overlay.Alpha = 1f - (float) Math.Clamp((_iconsComp.Accumulator - edge0) / (edge1 - edge0), 0.0, 1.0);
+                _overlay.Alpha = 1f - _iconsComp.Accumulator;
             }
             else
             {
