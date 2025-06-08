@@ -1,7 +1,7 @@
 light_mode unshaded;
 
 const highp float FADE_IN_DIST = 0.1;
-const highp vec4 brightCol = vec4(0.326, 0.819, 0.894, 0.75);
+const highp vec4 col = vec4(0.326, 0.819, 0.894, 0.75);
 
 void fragment() {
 
@@ -12,8 +12,10 @@ void fragment() {
 
 	if (alpha >= 1.0) {
 	    alpha = 0.0;
-	}
+	} else if (alpha > 0.975) {
+        alpha = 0.25; //smoothing the edges off a bit
+    }
 
-    COLOR.rgb = brightCol.rgb;
-    COLOR.a = brightCol.a * (alpha);
+    COLOR.rgb = col.rgb;
+    COLOR.a = col.a * alpha;
 }

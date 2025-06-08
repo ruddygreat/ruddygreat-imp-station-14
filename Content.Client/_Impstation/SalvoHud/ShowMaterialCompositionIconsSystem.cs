@@ -115,6 +115,7 @@ public sealed class ShowMaterialCompositionIconsSystem : EquipmentHudSystem<Show
 
         if (_iconsComp == null)
         {
+            //more sate resetting
             _overlay.Radius = 0f;
             _overlay.ScanPoint = null;
         }
