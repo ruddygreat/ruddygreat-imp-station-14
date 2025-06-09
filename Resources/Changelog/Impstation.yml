@@ -1,32 +1,4 @@
 ﻿Entries:
-- author: kipdotnet
-  changes:
-  - message: Added a special coat to the salvage loadout for decapoids to use.
-    type: Add
-  id: 1287
-  time: '2025-03-13T05:19:43.0000000+00:00'
-  url: https://github.com/impstation/imp-station-14/pull/1890
-- author: Tyranex
-  changes:
-  - message: Readded the scream button for cyborgs.
-    type: Fix
-  id: 1288
-  time: '2025-03-13T05:22:01.0000000+00:00'
-  url: https://github.com/impstation/imp-station-14/pull/1920
-- author: Sha-Seng
-  changes:
-  - message: You can now eat the rat king
-    type: Tweak
-  id: 1289
-  time: '2025-03-13T05:24:04.0000000+00:00'
-  url: https://github.com/impstation/imp-station-14/pull/1897
-- author: AvianMaiden
-  changes:
-  - message: Shotgun shell boxes now look correct
-    type: Fix
-  id: 1290
-  time: '2025-03-13T06:05:05.0000000+00:00'
-  url: https://github.com/impstation/imp-station-14/pull/1918
 - author: bigsantino1
   changes:
   - message: Salvage magnet announcement no longer happens twice.
@@ -4208,3 +4180,38 @@
   id: 1786
   time: '2025-06-09T00:56:06.0000000+00:00'
   url: https://github.com/impstation/imp-station-14/pull/2691
+- author: DinnerCalzone
+  changes:
+  - message: Wall rechargers charge rate has been reduced to match standard rechargers.
+    type: Tweak
+  id: 1787
+  time: '2025-06-09T01:03:30.0000000+00:00'
+  url: https://github.com/impstation/imp-station-14/pull/2680
+- author: britno
+  changes:
+  - message: Added Irwizine, a chemical that pacifies normally hostile creatures with
+      15u of accumilation. Perfect for putting together exhibits with deadly beasts!
+    type: Add
+  - message: Added the Muldoon tranquilizer rifle, a scoped gun that only shoots Irwizine
+      and Chloral Hydrate darts.
+    type: Add
+  - message: Gave the zookeeper the Muldoon and some darts at the start of the round.
+    type: Tweak
+  id: 1788
+  time: '2025-06-09T01:35:01.0000000+00:00'
+  url: https://github.com/impstation/imp-station-14/pull/2555
+- author: DinnerCalzone
+  changes:
+  - message: The time between being able to knock on the same window, blast door,
+      or shutter has increased to be less annoying.
+    type: Tweak
+  id: 1789
+  time: '2025-06-09T02:02:59.0000000+00:00'
+  url: https://github.com/impstation/imp-station-14/pull/2694
+- author: mqole
+  changes:
+  - message: Another upstream merge. Surprise!
+    type: Add
+  id: 1790
+  time: '2025-06-09T05:08:13.0000000+00:00'
+  url: https://github.com/impstation/imp-station-14/pull/2695
