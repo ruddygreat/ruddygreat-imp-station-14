@@ -170,7 +170,7 @@
   - type: Sprite
     state: coin_silver
   - type: StaticPrice
-    price: 125
+    price: 150 #imp edit - increase price to 150 to give some extra incentive to maybe sell them
   #imp edit - restore physical composition
   - type: PhysicalComposition
     materialComposition:
