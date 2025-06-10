@@ -8,7 +8,7 @@ namespace Content.Shared.Cargo;
 /// A data structure for storing currently available bounties.
 /// </summary>
 [DataDefinition, NetSerializable, Serializable]
-public readonly partial record struct CargoBountyData
+public partial record struct CargoBountyData //imp edit - removed readonly for claiming & statuses
 {
     /// <summary>
     /// A unique id used to identify the bounty
@@ -28,4 +28,21 @@ public readonly partial record struct CargoBountyData
         Bounty = bounty.ID;
         Id = $"{bounty.IdPrefix}{uniqueIdentifier:D3}";
     }
+
+    //imp edit begin
+    [DataField]
+    public string ClaimedBy { get; init; } = string.Empty;
+
+    [DataField]
+    public CargoBountyStatus Status { get; init; } = CargoBountyStatus.Undelivered;
+    //imp edit end
 }
+
+//imp edit - bounty status. yell at me to move this into our namespace later probably
+public enum CargoBountyStatus
+{
+    Undelivered,
+    Waiting,
+    OnShuttle,
+}
+//imp edit end

@@ -19,6 +19,10 @@ public sealed partial class BountyEntry : BoxContainer
     public Action? OnLabelButtonPressed;
     public Action? OnSkipButtonPressed;
 
+    //imp edit - claiming & stauts
+    public Action? OnClaimButtonPressed;
+    public Action? OnStatusOptionSelected;
+
     public TimeSpan EndTime;
     public TimeSpan UntilNextSkip;
 
@@ -46,6 +50,18 @@ public sealed partial class BountyEntry : BoxContainer
 
         PrintButton.OnPressed += _ => OnLabelButtonPressed?.Invoke();
         SkipButton.OnPressed += _ => OnSkipButtonPressed?.Invoke();
+
+        //imp edit - claiming & status picking
+        ClaimButton.OnPressed += _ => OnClaimButtonPressed?.Invoke();
+        BountyStatusSelector.AddItem("Undelivered", 0); //todo locstringify
+        BountyStatusSelector.AddItem("Waiting", 1);
+        BountyStatusSelector.AddItem("On Shuttle", 2);
+        BountyStatusSelector.Select((int) bounty.Status);
+
+        var claimedByText = string.IsNullOrEmpty(bounty.ClaimedBy) ? "None" : bounty.ClaimedBy;
+        ClaimedBylabel.Text = $"Claimed by: {claimedByText}";
+        StatusLabel.Text = $"Status: {bounty.Status}";
+        //imp edit end
     }
 
     private void UpdateSkipButton(float deltaSeconds)

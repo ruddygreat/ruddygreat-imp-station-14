@@ -47,7 +47,73 @@ public sealed partial class CargoSystem
         _stackQuery = GetEntityQuery<StackComponent>();
         _containerQuery = GetEntityQuery<ContainerManagerComponent>();
         _bountyLabelQuery = GetEntityQuery<CargoBountyLabelComponent>();
+
+        //imp edit - claiming & status
+        SubscribeLocalEvent<CargoBountyConsoleComponent, BountyClaimedMessage>(OnBountyClaimedMessage);
+        SubscribeLocalEvent<CargoBountyConsoleComponent, BountySetStatusMessage>(OnSetBountyStatusMessage);
+        //imp edit end
     }
+
+    //imp edit - claiming & status
+    //todo move into partial class in our namespace
+    private void OnSetBountyStatusMessage(Entity<CargoBountyConsoleComponent> ent, ref BountySetStatusMessage args)
+    {
+        if (_station.GetOwningStation(ent.Owner) is not { } station || !TryComp<StationCargoBountyDatabaseComponent>(station, out var bountyDbComp))
+            return;
+
+        //kinda sucks I hate structs actually
+        for (var i = 0; i < bountyDbComp.Bounties.Count; i++)
+        {
+            var bounty = bountyDbComp.Bounties[i];
+
+            if (bounty.Id != args.BountyId)
+                continue;
+
+            var newData = new CargoBountyData
+            {
+                Id = bounty.Id,
+                Bounty = bounty.Bounty,
+                ClaimedBy = bounty.ClaimedBy,
+                Status = (CargoBountyStatus)args.Status,
+            };
+
+            bountyDbComp.Bounties[i] = newData;
+        }
+
+        var untilNextSkip = bountyDbComp.NextSkipTime - Timing.CurTime;
+        _uiSystem.SetUiState(ent.Owner, CargoConsoleUiKey.Bounty, new CargoBountyConsoleState(bountyDbComp.Bounties, bountyDbComp.History, untilNextSkip));
+    }
+
+    private void OnBountyClaimedMessage(Entity<CargoBountyConsoleComponent> ent, ref BountyClaimedMessage args)
+    {
+        if (_station.GetOwningStation(ent.Owner) is not { } station || !TryComp<StationCargoBountyDatabaseComponent>(station, out var bountyDbComp))
+            return;
+
+        //kinda sucks I hate structs actually
+        for (var i = 0; i < bountyDbComp.Bounties.Count; i++)
+        {
+            var bounty = bountyDbComp.Bounties[i];
+
+            if (bounty.Id != args.BountyId)
+                continue;
+
+            var actorMetadata = MetaData(args.Actor);
+
+            var newData = new CargoBountyData
+            {
+                Id = bounty.Id,
+                Bounty = bounty.Bounty,
+                ClaimedBy = actorMetadata.EntityName.Equals(bounty.ClaimedBy) ? String.Empty : actorMetadata.EntityName, //todo make this take from the ID
+                Status = bounty.Status,
+            };
+
+            bountyDbComp.Bounties[i] = newData;
+        }
+
+        var untilNextSkip = bountyDbComp.NextSkipTime - Timing.CurTime;
+        _uiSystem.SetUiState(ent.Owner, CargoConsoleUiKey.Bounty, new CargoBountyConsoleState(bountyDbComp.Bounties, bountyDbComp.History, untilNextSkip));
+    }
+    //imp edit end
 
     private void OnBountyConsoleOpened(EntityUid uid, CargoBountyConsoleComponent component, BoundUIOpenedEvent args)
     {

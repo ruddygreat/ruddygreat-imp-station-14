@@ -82,3 +82,29 @@ public sealed class BountySkipMessage : BoundUserInterfaceMessage
         BountyId = bountyId;
     }
 }
+
+//imp edit - bounty claiming & statuses
+[Serializable, NetSerializable]
+public sealed class BountyClaimedMessage : BoundUserInterfaceMessage
+{
+    public string BountyId;
+
+    public BountyClaimedMessage(string bountyId)
+    {
+        BountyId = bountyId;
+    }
+}
+
+[Serializable, NetSerializable]
+public sealed class BountySetStatusMessage : BoundUserInterfaceMessage
+{
+    public string BountyId;
+    public int Status;
+
+    public BountySetStatusMessage(string bountyId, int status)
+    {
+        BountyId = bountyId;
+        Status = status;
+    }
+}
+//imp edit end
