@@ -74,13 +74,6 @@ public sealed partial class StationBankAccountComponent : Component
     /// </summary>
     [DataField]
     public TimeSpan IncomeDelay = TimeSpan.FromSeconds(50);
-
-    /// <summary>
-    /// imp edit - for variable sell prices
-    /// </summary>
-    /// <returns></returns>
-    [DataField]
-    public Dictionary<string, double> SpesosGenerated = [];
 }
 
 /// <summary>
