@@ -61,6 +61,7 @@
   - NoviceMark
   - BarFlask
   - CardBoxBlack
+  - CardBoxTarot
   - Clipboard
   - ClothingHeadHatKippahBlueAndGold
   - ClothingHeadHatKippahSimple
@@ -698,6 +699,7 @@
   - MusicianJumpsuit
   - MusicianJumpskirt
   - MusicianMarchingBand #imp
+  - MusicianSingerDress #imp
 
 - type: loadoutGroup
   id: MusicianOuterClothing
@@ -705,6 +707,7 @@
   minLimit: 0
   loadouts:
   - MusicianWintercoat
+  - MusicianFurCoat #imp
 
 - type: loadoutGroup
   id: Instruments
@@ -1173,7 +1176,6 @@
 - type: loadoutGroup
   id: HeadofSecurityOuterClothing
   name: loadout-group-head-of-security-outerclothing
-  minLimit: 0 # imp edit
   loadouts:
   - HeadofSecurityCoat
   - HeadofSecurityEliteArmor #imp
@@ -1204,7 +1206,6 @@
 - type: loadoutGroup
   id: WardenOuterClothing
   name: loadout-group-warden-outerclothing
-  minLimit: 0 # imp edit
   loadouts:
   - WardenCoat
   - WardenArmoredWinterCoat
@@ -1245,7 +1246,6 @@
 - type: loadoutGroup
   id: SecurityBelt
   name: loadout-group-security-belt
-  minLimit: 0 # imp edit
   loadouts:
   - SecurityBelt
   - SecurityWebbing
@@ -1253,7 +1253,6 @@
 - type: loadoutGroup
   id: SecurityOuterClothing
   name: loadout-group-security-outerclothing
-  minLimit: 0 # imp edit
   loadouts:
   - ArmorVest
   - ArmorVestCompact #imp
@@ -1314,7 +1313,6 @@
 - type: loadoutGroup
   id: DetectiveOuterClothing
   name: loadout-group-detective-outerclothing
-  minLimit: 0 # imp edit
   loadouts:
   - ClothingOuterCoatFieldJacket #imp
   - DetectiveArmorVest
