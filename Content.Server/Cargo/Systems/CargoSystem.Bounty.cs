@@ -195,7 +195,7 @@ public sealed partial class CargoSystem
         msg.PushNewline();
         foreach (var entry in prototype.Entries)
         {
-            msg.AddMarkupOrThrow($"- {Loc.GetString("bounty-console-manifest-entry",
+            msg.AddMarkupOrThrow($"- wabagoogus {Loc.GetString("bounty-console-manifest-entry",
                 ("amount", entry.Amount),
                 ("item", Loc.GetString(entry.Name)))}");
             msg.PushNewline();
